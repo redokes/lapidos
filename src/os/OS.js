@@ -145,5 +145,5 @@ Ext.define('Lapidos.os.OS', {
 	onBoot: function() {
 		this.fireEvent('boot', this, this.config);
 	}
-	// ssh test
+	
 });
