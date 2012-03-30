@@ -1,77 +1,99 @@
+/**
+ * Provides an entry point to handle all lapidos operations and events. The OS 
+ * sets up everything you need to manage all services and modules.
+ * 
+ * At its basics the OS consists of the following
+ * 
+ *  - Module Manager
+ *  - Service Manager
+ *  - Shell
+ * 
+ * @constructor
+ * @param {Object} config The config object
+ */
 Ext.define('Lapidos.os.OS', {
 	extend: 'Ext.util.Observable',
-    singleton: true,
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Requires
 	///////////////////////////////////////////////////////////////////////////
 	requires:[
 		'Lapidos.module.Manager',
-		'Lapidos.service.Manager'
+		'Lapidos.service.Manager',
+		'Lapidos.resource.Manager',
+		'Lapidos.shell.Shell',
+		'Lapidos.core.module.Core'
 	],
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Config
 	///////////////////////////////////////////////////////////////////////////
 	config: {
+		
+		/**
+		 * @cfg {Lapidos.module.Manager} 
+		 * Module manager used to manage all registered modules with the system. 
+		 * Handles launching and quiting of modules.
+		 * 
+		 * @accessor
+		 */
 		moduleManager: null,
+		
+		/**
+		 * @cfg {Lapidos.service.Manager} 
+		 * Service manager used to manage all registered services with the system. 
+		 * Handles the starting and stopping of services.
+		 * 
+		 * @accessor
+		 */
 		serviceManager: null,
+		
+		/**
+		 * @cfg {Lapidos.resource.Manager} 
+		 * Resource manager used to manage resources with the system. 
+		 * 
+		 * @accessor
+		 */
+		resourceManager: null,
+		
+		/**
+		 * @cfg {Lapidos.shell.Shell} 
+		 * Contains a reference to the shell of the OS. The shell determins how 
+		 * the user will see the system.
+		 * 
+		 * @accessor
+		 */
 		shell: null
 	},
-	
-	///////////////////////////////////////////////////////////////////////////
-	// Properties
-	///////////////////////////////////////////////////////////////////////////
-	modules: false,
-	
-	/**
-	* @type {RedAmp.module.Manager}
-	* Module manager that handles all modules that are registered with the OS
-	*/
-	moduleManager: false,
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Events
 	///////////////////////////////////////////////////////////////////////////
 	/**
-	* @event before-boot
+	* @event beforeboot
 	* Fires before the OS begins booting
-	* @param {OS} os
+	* @param {Lapidos.os.OS} os
 	* @param {Object} config
 	*/
    
    /**
 	* @event boot
 	* Fires when the OS has booted.
-	* @param {OS} os
+	* @param {Lapidos.os.OS} os
 	*/
    
    /**
-	* @event init-service-manager
+	* @event initservicemanager
 	* Fires when the service manager has been created.
-	* @param {OS} os
+	* @param {Lapidos.os.OS} os
 	* @param {Lapidos.service.Manager} manager
 	*/
    
    /**
-	* @event init-module-manager
+	* @event initmodulemanager
 	* Fires when the module manager has been created.
-	* @param {OS} os
+	* @param {Lapidos.os.OS} os
 	* @param {Lapidos.service.Manager} manager
-	*/
-   
-   /**
-	* @event before-launch
-	* Fires before the OS launches a module
-	* @param {OS} os
-	* @param {RedOkes.module.Module} module
-	*/
-   
-   /**
-	* @event launch
-	* Fires when the OS launches a module.
-	* @param {OS} os
-	* @param {RedOkes.module.Module} module
 	*/
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -80,70 +102,65 @@ Ext.define('Lapidos.os.OS', {
 	constructor: function(config) {
 		this.initConfig(config);
 		this.callParent(arguments);
+		this.init();
 		this.boot();
 	},
 	
+	init: Ext.emptyFn,
+	
 	boot: function() {
 		this.onBeforeBoot();
-		this.initShell();
 		this.initServiceManager();
 		this.initModuleManager();
-		this.processRegistry();
+		this.initResourceManager();
+		this.initShell();
 		this.onBoot();
-	},
-	
-	processRegistry: function() {
-		// Look up auto start modules and services
-		var modules = [
-			'Lapidos.module.Test',
-			'Lapidos.module.Test2',
-		];
-		Ext.require(modules, function() {
-			var numModules = modules.length;
-			for (var i = 0; i < numModules; i++) {
-				this.moduleManager.register(modules[i]);
-			}
-		}, this);
 	},
 	
 	//Debug
 	fireEvent: function(){
-		console.log(this.self.getName() + ' - ' + arguments[0]);
 		return this.callParent(arguments);
 	},
 	
 	initShell: function() {
-		Ext.require('Lapidos.shell.Viewport', function() {
-			this.shell = Ext.create('Lapidos.shell.Viewport', {
-				os: this
-			});
-		}, this);
+		if (this.getShell() != null) {
+			return;
+		}
+		this.setShell(new Lapidos.shell.Shell(this));
 	},
 	
 	initServiceManager: function(){
-		this.serviceManager = Ext.create('Lapidos.service.Manager', {
-			os: this
-		});
-		this.fireEvent('init-service-manager', this, this.serviceManager);
+		this.setServiceManager(new Lapidos.service.Manager(this));
+		this.fireEvent('initservicemanager', this, this.getServiceManager());
 	},
 	
 	initModuleManager: function(){
-		this.moduleManager = Ext.create('Lapidos.module.Manager', {
-			os: this
-		});
-		this.fireEvent('init-module-manager', this, this.moduleManager);
+		this.setModuleManager(new Lapidos.module.Manager(this));
+		this.fireEvent('initmodulemanager', this, this.getModuleManager());
+		
+		this.getModuleManager().register('Lapidos.core.module.Core');
 	},
 	
+	initResourceManager: function() {
+		this.setResourceManager(new Lapidos.resource.Manager(this));
+		this.fireEvent('initresourcemanager', this, this.getResourceManager());
+	},
 	
 	///////////////////////////////////////////////////////////////////////////
 	// On Events
 	///////////////////////////////////////////////////////////////////////////
+	
+	/**
+	* Function called before the system runs the boot commands
+	*/
 	onBeforeBoot: function() {
-		this.fireEvent('before-boot', this, this.config);
+		this.fireEvent('beforeboot', this, this.config);
 	},
 	
+	/**
+	* Function called after the system has booted
+	*/
 	onBoot: function() {
 		this.fireEvent('boot', this, this.config);
 	}
-	
 });
