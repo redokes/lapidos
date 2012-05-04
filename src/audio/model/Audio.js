@@ -9,14 +9,6 @@
 Ext.define('Lapidos.audio.model.Audio', {
 	extend: 'Ext.data.Model',
 	
-	config: {
-		src: null,
-		preload: 'auto',
-		el: null,
-		playedPercent: 0,
-		fadeDuration: 0,
-	},
-	
 	fadeStartTime: 0,
 	fadeStopTime: 0,
 	fadeStartVolume: 0,
@@ -24,27 +16,95 @@ Ext.define('Lapidos.audio.model.Audio', {
 	fadeCurrentTime: 0,
 	fadeInterval: 0,
 	
-	fields: [
-		'id',
-		'src',
-		'fileName',
-		'instance',
-		'isLoaded',
-		'isLoading'
-	],
-	proxy: {
-		type: 'memory'
+	fields:[{
+		name: 'url',
+		type: 'string'
+	},{
+		name: 'file'
+	},{
+		name:'name',
+		type:'string'
+	},{
+		name:'size',
+		type:'integer'
+	},{
+		name:'type',
+		type:'string'
+	},{
+		name:'path',
+		type:'string'
+	},{
+		name:'title',
+		type:'string'
+	},{
+		name:'artist',
+		type:'string'
+	},{
+		name:'album',
+		type:'string'
+	},{
+		name:'year',
+		type:'string'
+	},{
+		name:'track',
+		type:'string'
+	},{
+		name: 'preload',
+		type: 'string',
+		defaultValue: 'auto'
+	},{
+		name: 'el',
+		defaultValue: null
+	},{
+		name: 'fadeDuration',
+		type: 'number',
+		defaultValue: 0
+	},{
+		name: 'src',
+		type: 'string'
+	}, {
+		name: 'isLoading',
+		defaultValue: false
+	}, {
+		name: 'isLoaded',
+		defaultValue: false
+	}],
+	
+	proxy:{
+		type:'memory',
+		reader:{
+			type:'json',
+			root:'records'
+		}
 	},
 	
-	constructor: function(config) {
-		this.initConfig(config);
+	playing: false,
+	paused: false,
+	
+	// TODO: remove these wrappers
+	getEl: function() {
+		return this.get('el')
+	},
+	setEl: function(el) {
+		this.set('el', el)
+	},
+	getSrc: function() {
+		return this.get('src')
+	},
+	setSrc: function(src) {
+		console.log('set src method');
+		if (!this.get('el')) {
+			this.initEl();
+			this.initListeners();
+		}
+		this.getEl().dom.src = src;
+	},
+	getPreload: function() {
+		return this.get('preload')
+	},
+	
+	constructor: function() {
 		this.callParent(arguments);
-		this.init();
-	},
-	
-	init: function() {
-		this.initEl();
-		this.initListeners();
 	},
 	
 	initEl: function() {
@@ -64,13 +124,20 @@ Ext.define('Lapidos.audio.model.Audio', {
 		}, this);
 		
 		this.getEl().on('timeupdate', function() {
-			this.setPlayedPercent(this.getEl().dom.currentTime / this.getEl().dom.duration);
 			this.fireEvent('timeupdate', this, arguments);
 		}, this);
 		
 		this.getEl().on('ended', function() {
 			this.fireEvent('ended', this, arguments);
 		}, this);
+	},
+	
+	setPlayedPercent: function(percent) {
+		this.getEl().dom.currentTime = this.getEl().dom.duration * percent;
+	},
+	
+	getPlayedPercent: function() {
+		return this.getEl().dom.currentTime / this.getEl().dom.duration;
 	},
 	
 	getRemainingTime: function() {
@@ -86,6 +153,7 @@ Ext.define('Lapidos.audio.model.Audio', {
 	},
 	
 	pause: function() {
+		this.paused = true;
 		this.getEl().dom.pause();
 		this.fireEvent('pause', this);
 		return;
@@ -108,11 +176,16 @@ Ext.define('Lapidos.audio.model.Audio', {
 	},
 	
 	play: function() {
+		this.playing = true;
 		this.getEl().dom.play();
 	},
 	
 	stop: function() {
-		this.getEl().dom.pause();
+		this.playing = false;
+		this.paused = false;
+		if (this.getEl()) {
+			this.getEl().dom.pause();
+		}
 	},
 	
 	getVolume: function() {
@@ -123,12 +196,16 @@ Ext.define('Lapidos.audio.model.Audio', {
 		this.getEl().dom.volume = volume;
 	},
 	
+	preload: function() {
+		
+	},
+	
 	seek: function(offset) {
 		if (offset < 0) {
-			this.el.dom.currentTime = this.el.dom.duration + offset;
+			offset = this.getEl().dom.duration - offset;
 		}
-		else if (offset > 0 && offset > this.el.dom.duration) {
-			this.el.dom.currentTime = offset;
+		if (offset > 0 && offset < this.getEl().dom.duration) {
+			this.getEl().dom.currentTime = offset;
 		}
 	},
 	
@@ -153,5 +230,13 @@ Ext.define('Lapidos.audio.model.Audio', {
 				this.setVolume(newVolume);
 			}
 		}.bind(this), 50);
+	},
+	
+	isPlaying: function(){
+		return this.playing;
+	},
+	
+	isPaused: function(){
+		return this.paused;
 	}
 });

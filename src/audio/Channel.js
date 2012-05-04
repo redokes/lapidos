@@ -6,6 +6,9 @@
  * @constructor
  * @param {Object} config The config object
  */
+
+// TODO: add methods for things like setVolume on the whole channel. make sure any
+// new items that are added get their volume set to the channel volume
 Ext.define('Lapidos.audio.Channel', {
 	extend: 'Ext.util.Observable',
 	
@@ -96,11 +99,11 @@ Ext.define('Lapidos.audio.Channel', {
 	
 	play: function(src, options) {
 		var defaultOptions = {
-			enqueue: false
+			enqueue: false,
+			playNow: false
 		};
 		options = options || {};
 		options = Ext.apply(defaultOptions, options);
-		
 		var audio;
 		if (typeof src == 'string') {
 			audio = new Lapidos.audio.model.Audio({
@@ -110,10 +113,15 @@ Ext.define('Lapidos.audio.Channel', {
 		else {
 			audio = src;
 		}
-		
 		if (this.getMode() == 'multi') {
 			if (this.getActiveAudio() && options.enqueue) {
-				this.playQueue.push(audio);
+				console.log('queneuye it ' + audio.get('name'))
+				this.enqueue(audio);
+			}
+			else if (options.playNow) {
+				this.stop();
+				this.clearPlayQueue();
+				this.startPlaying(audio);
 			}
 			else {
 				this.startPlaying(audio);
@@ -127,11 +135,23 @@ Ext.define('Lapidos.audio.Channel', {
 		}
 	},
 	
+	enqueue: function(audio) {
+		this.playQueue.push(audio);
+		audio.preload();
+	},
+	
+	stop: function() {
+		if (this.getActiveAudio()) {
+			this.getActiveAudio().stop();
+		}
+	},
+	
 	startPlaying: function(audio) {
+		var oldAudio = this.getActiveAudio();
 		this.setActiveAudio(audio);
 		this.getActiveAudio().on('timeupdate', this.onTimeUpdate, this);
 		this.getActiveAudio().play();
-		this.fireEvent('changeaudio', this, audio);
+		this.fireEvent('changeaudio', this, audio, oldAudio);
 	},
 	
 	onTimeUpdate: function(audio) {
@@ -179,6 +199,10 @@ Ext.define('Lapidos.audio.Channel', {
 			this.startPlaying(this.playQueue[0]);
 			this.playQueue.splice(0, 1);
 		}
-	}
+	},
+	
+	clearPlayQueue: function() {
+		this.playQueue = [];
+	},
 	
 });
