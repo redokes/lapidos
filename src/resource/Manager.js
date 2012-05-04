@@ -1,8 +1,8 @@
 /**
- * Component that is used to load and manage all types of reources.
+ * Component that is used to load and manage all types of resources.
  * 
  * @constructor
- * @param {Lapidos.os.OS} os
+ * @param {Lapidos.os.Os} os
  * @param {Object} config The config object
  */
 Ext.define('Lapidos.resource.Manager', {
@@ -25,7 +25,7 @@ Ext.define('Lapidos.resource.Manager', {
 	///////////////////////////////////////////////////////////////////////////
 	
 	/**
-	* @type {Lapidos.os.OS}
+	* @type {Lapidos.os.Os}
 	* 
 	* Operating system being used with this manager
 	*/

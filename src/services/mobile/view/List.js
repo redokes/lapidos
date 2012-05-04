@@ -72,7 +72,7 @@ Ext.define('Lapidos.services.mobile.view.List', {
 			}
 		});
 		
-		this.actionSheet = Ext.create('Ext.ActionSheet', {
+		this.actionSheet = new Ext.ActionSheet({
 			items: actions
 		});
 		

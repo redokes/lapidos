@@ -1,5 +1,8 @@
 Ext.define('Lapidos.form.Test', {
 	extend: 'Lapidos.form.Group',
+	requires: [
+		'Lapidos.form.Panel'
+	],
 	
 	config: {
 		url: '/ajax/contact/process/test',
@@ -7,7 +10,7 @@ Ext.define('Lapidos.form.Test', {
 	},
 	
 	init: function() {
-		var form1 = Ext.create('Lapidos.form.Panel', {
+		var form1 = new Lapidos.form.Panel({
 			title: 'Form 1',
 			hashName: 'form_one',
 			items: [{
@@ -34,7 +37,7 @@ Ext.define('Lapidos.form.Test', {
 			}]
 		});
 		
-		var form2 = Ext.create('Lapidos.form.Panel', {
+		var form2 = new Lapidos.form.Panel({
 			title: 'Form 2',
 			hashName: 'form_two',
 			items: [{
@@ -61,7 +64,7 @@ Ext.define('Lapidos.form.Test', {
 			}]
 		});
 		
-		var form3 = Ext.create('Lapidos.form.Panel', {
+		var form3 = new Lapidos.form.Panel({
 			title: 'Form 2 clone',
 			hashName: 'form_two',
 			items: [{

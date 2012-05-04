@@ -1,10 +1,10 @@
 /**
- * Component that is used to manage all modules within a Lapidos.os.OS system. 
+ * Component that is used to manage all modules within a Lapidos.os.Os system. 
  * The module manager keeps track of all registered modules, as well as which modules 
  * are running and not running.
  * 
  * @constructor
- * @param {Lapidos.os.OS} os
+ * @param {Lapidos.os.Os} os
  * @param {Object} config The config object
  */
 Ext.define('Lapidos.module.Manager', {
@@ -28,7 +28,7 @@ Ext.define('Lapidos.module.Manager', {
 	///////////////////////////////////////////////////////////////////////////
 	
 	/**
-	* @type {Lapidos.os.OS}
+	* @type {Lapidos.os.Os}
 	* 
 	* Operating system being used with this manager
 	*/
@@ -58,7 +58,7 @@ Ext.define('Lapidos.module.Manager', {
 	},
 	
 	initStore: function() {
-		this.store = Ext.create('Ext.data.Store', {
+		this.store = new Ext.data.Store({
 			model: 'Lapidos.module.model.Module'
 		});
 	},
@@ -122,7 +122,7 @@ Ext.define('Lapidos.module.Manager', {
 	
 	/**
 	* Returns the value of {@link #os}
-	* @return {Lapidos.os.OS} os
+	* @return {Lapidos.os.Os} os
 	*/
 	getOs: function(){
 		return this.os;

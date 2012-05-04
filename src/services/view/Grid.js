@@ -18,7 +18,7 @@ Ext.define('Lapidos.services.view.Grid', {
     },
 	
 	initSelectionModel: function() {
-		this.selModel = Ext.create('Ext.selection.CheckboxModel', {
+		this.selModel = new Ext.selection.CheckboxModel({
 			mode: 'SIMPLE'
 		});
 	},
@@ -47,7 +47,7 @@ Ext.define('Lapidos.services.view.Grid', {
 	},
 	
 	initActionBar: function() {
-		this.topBar = Ext.create('Ext.toolbar.Toolbar', {
+		this.topBar = new Ext.toolbar.Toolbar({
 			dock: 'top',
 			items:[{
 				scope: this,

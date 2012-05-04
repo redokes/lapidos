@@ -1,60 +1,57 @@
 Ext.define('Lapidos.form.Panel', {
 	alias: 'widget.lapidosform',
 	extend: 'Ext.form.Panel',
+	requires: [
+		'Lapidos.form.Button'
+	],
 	
 	config: {
 		url: '',
 		hashName: '',
 		jsonSubmit: true,
 		extraParams: {},
-		submitText: 'Submit'
-	},
-	
-	constructor: function(config) {
-//		if (this.items == null) {
-//			this.initConfig(config);
-//			this.dockedItems = [];
-//		}
-		this.callParent(arguments);
-		this.initBottomBar();
-		this.initSubmitButton();
-	},
-	
-	initBottomBar: function() {
-		this.bottomBar = Ext.create('Ext.toolbar.Toolbar', {
-			docked: 'bottom',
-			dock: 'bottom'
-		});
+		submitText: 'Submit',
 		
-		if (this.dockedItems == null) {
-			this.add(this.bottomBar);
-		}
-		else {
-			this.addDocked(this.bottomBar);
+		autoCreateSubmit: true,
+		submitButtonDock: 'bottom',
+		dockSubmit: true,
+		submitUi: 'confirm'
+	},
+	
+	constructor: function() {
+		this.callParent(arguments);
+		
+		if (this.getAutoCreateSubmit()) {
+			var config = {
+				scope: this,
+				text: this.getSubmitText(),
+				ui: this.getSubmitUi(),
+				handler: this.handleSubmitButton,
+				flex: 1,
+				docked: this.getSubmitButtonDock(),
+				margin: 20
+			};
+			this.add(this.createSubmitButton(config));
 		}
 	},
 	
-	initSubmitButton: function() {
-		this.submitButton = Ext.create('Ext.button.Button', {
+	createSubmitButton: function(config) {
+		return new Lapidos.form.Button(config);
+	},
+	
+	handleSubmitButton: function(button) {
+		this.submit({
 			scope: this,
-			text: this.getSubmitText(),
-			flex: 1,
-			ui: 'confirm',
-			handler: function() {
-				this.submit({
-					scope: this,
-					url: this.getUrl(),
-					method: 'post',
-					success: this.onSuccess,
-					failure: this.onFailure,
-					waitMsg: {
-						message: 'Submitting',
-						cls: 'needaclass'
-					}
-				});
-			}
+			url: this.getUrl(),
+			method: 'post',
+			success: this.onSuccess,
+			failure: this.onFailure,
+			waitMsg: {
+				message: 'Submitting',
+				cls: 'needaclass'
+			},
+			button: button
 		});
-		this.bottomBar.add(this.submitButton);
 	},
 	
 	/**
@@ -86,6 +83,7 @@ Ext.define('Lapidos.form.Panel', {
 	},
 	
 	submit: function(submitParams) {
+		this.submitParams = submitParams;
 		if (this.rendered) {
 			var values = this.getValues();
 			if (!values) {
@@ -116,40 +114,37 @@ Ext.define('Lapidos.form.Panel', {
 					var errors = result.errors;
 					var errorStr = result.errorStr;
 					
-					var overlay = Ext.create('Ext.panel.Panel', {
-						floating: true,
-						modal: true,
-						hidden: true,
-						height: 300,
-						width: '50%',
-						html: errorStr,
-						styleHtmlContent: true,
-						scrollable: true,
-						items: [{
-							docked: 'top',
-							xtype : 'toolbar',
-							title : 'Errors'
-						}]
-					});
-					overlay.showBy(this.submitButton);
-					return;
-					
-					var errorsArray = [];
-					for (var id in errors) {
-						var errorValue = errors[id];
-						if(Ext.isObject(errorValue)){
-							errorsArray.push(errorValue);
-						}
-						else{
-							errorsArray.push({
-								id: id,
-								msg: errorValue
-							});
-						}
+					if (!this.overlay) {
+						this.overlay = Ext.Viewport.add(new Ext.panel.Panel({
+							modal: true,
+							hideOnMaskTap: true,
+							showAnimation: {
+								type: 'popIn',
+								duration: 250,
+								easing: 'ease-out'
+							},
+							hideAnimation: {
+								type: 'popOut',
+								duration: 250,
+								easing: 'ease-out'
+							},
+							centered: true,
+							width: '60%',
+							height: '50%',
+							styleHtmlContent: true,
+							html: errorStr,
+							items: [{
+								docked: 'top',
+								xtype : 'toolbar',
+								title : 'Errors'
+							}],
+							scrollable: true
+						}));
 					}
-					if (this.getForm != null) {
-						this.getForm().markInvalid(errorsArray);
+					else {
+						this.overlay.setHtml(errorStr);
 					}
+					this.overlay.show();
 				}
 			};
 			this.callParent(arguments);

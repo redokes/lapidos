@@ -1,5 +1,5 @@
 /**
- * Module class used with Lapidos.os.OS. Every module that needs to run within 
+ * Module class used with Lapidos.os.Os. Every module that needs to run within 
  * the os should extend this class.
  * 
  * <pre><code>
@@ -61,9 +61,9 @@ Ext.define('Lapidos.module.Module', {
 		icon: '',
 		
 		/**
-		 * @cfg {Lapidos.os.OS} 
+		 * @cfg {Lapidos.os.Os} 
 		 * 
-		 * A reference to the main {@link Lapidos.os.OS operating system}
+		 * A reference to the main {@link Lapidos.os.Os operating system}
 		 * 
 		 * @accessor
 		 */

@@ -1,7 +1,8 @@
 Ext.define('Lapidos.shell.dom.Dom', {
     extend: 'Lapidos.shell.Shell',
 	requires: [
-		'Lapidos.shell.dom.service.History'
+		'Lapidos.shell.dom.service.History',
+		'Lapidos.notification.ui.Notification'
 	],
     
 	///////////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ Ext.define('Lapidos.shell.dom.Dom', {
 			};
 		}
 		
-		var notification = Ext.create('Lapidos.notification.ui.Notification', Ext.apply({
+		var notification = new Lapidos.notification.ui.Notification(Ext.apply({
 			corner: 'tr',
 			cls: 'ux-notification-light',
 			manager: 'fullscreen',

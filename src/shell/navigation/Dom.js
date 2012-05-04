@@ -189,7 +189,8 @@ Ext.define('Lapidos.shell.navigation.Dom', {
 
 				// Check if this item has tags matching those in this store's tags
 				var intersection = Ext.Array.intersect(tags, filterTags);
-				switch(this.tagMode) {
+				
+				switch (this.tagMode) {
 					case 'any':
 						if (intersection.length) {
 							return true;

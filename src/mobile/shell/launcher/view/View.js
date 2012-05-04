@@ -1,38 +1,50 @@
 Ext.define('Lapidos.mobile.shell.launcher.view.View', {
 	extend: 'Ext.dataview.DataView',
+	requires: [
+		'TMS.Util'
+	],
 	
-	autoScroll: true,
-	baseCls: 'tms-shell-launcher-module-view',
-	trackOver: true,
 	config: {
-		title: 'TMS Home',
-		itemTpl: new Ext.XTemplate(
+		trackOver: true,
+//		autoScroll: true
+	},
+	
+	constructor: function() {
+		this.callParent(arguments);
+		this.initItemTpl();
+		this.initListeners();
+	},
+	
+	initItemTpl: function() {
+		this.setItemTpl(new Ext.XTemplate(
 			'<tpl for=".">',
-				'<div class="{[this.baseCls]}-item" style="float: left; width:100px; height: 100px; text-align: center; margin: 20px; {[!this.hasIcon(values.icon) ? "display: none;" : ""]}">',
-					'<div class="{[this.baseCls]}-item-icon">',
-						'<img src="{icon}" width="64" height="64" />',
+				'<div class="{[this.getCls(this.me, "item")]}" style="{[!this.hasIcon(values.icon) ? "display: none;" : ""]}">',
+					'<div class="{[this.getCls(this.me, "item", "icon")]}">',
+						'<img src="{icon}" />',
 					'</div>',
-					'<div class="{[this.baseCls]}-item-title" style="text-align: center; font-weight: bold;">',
-						'{title}',
+					'<div class="{[this.getCls(this.me, "item", "title")]}">',
+						'<span>',
+							'{title}',
+						'</span>',
 					'</div>',
 				'</div>',
 			'</tpl>',
 			'<div class="clear"></div>',
 			{
-				baseCls: this.baseCls,
-				hasIcon: function(icon){
-					if(icon.length){
+				me: this,
+				getCls: TMS.Util.generateCssClass,
+				hasIcon: function(icon) {
+					if (icon.length) {
 						return true;
 					}
 					return false;
+				},
+				getIcon: function(icon) {
+					console.log('setting src to ' + icon);
+					return icon;
 				}
 			}
-		)
-	},
-	
-	constructor: function() {
-		this.callParent(arguments);
-		this.initListeners();
+		));
 	},
 	
 	initListeners: function() {

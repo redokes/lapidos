@@ -1,5 +1,8 @@
 Ext.define('Lapidos.module.Interface', {
 	extend: 'Ext.panel.Panel',
+	requires: [
+		'Lapidos.module.Breadcrumb'
+	],
 	
 	layout: 'card',
 	
@@ -89,7 +92,7 @@ Ext.define('Lapidos.module.Interface', {
 	},
 	
 	initBreadcrumb: function() {
-		this.breadcrumb = Ext.create('Lapidos.module.Breadcrumb', {
+		this.breadcrumb = new Lapidos.module.Breadcrumb({
 			moduleInterface: this
 		});
 		this.dockedItems.push(this.breadcrumb);
@@ -103,7 +106,7 @@ Ext.define('Lapidos.module.Interface', {
 		var numButtons = this.titleButtons.length;
 		var button;
 		for (var i = 0; i < numButtons; i++) {
-			button = Ext.create('Ext.button.Button', {
+			button = new Ext.button.Button({
 				scope: this,
 				text: this.titleButtons[i].text,
 				viewCls: this.titleButtons[i].viewCls,

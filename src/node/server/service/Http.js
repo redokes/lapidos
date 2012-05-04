@@ -1,6 +1,11 @@
 Ext.define('Lapidos.node.server.service.Http', {
 	extend: 'Lapidos.service.Service',
 	
+	requires: [
+		'Lapidos.controller.Front',
+		'Lapidos.controller.response.Manager'
+	],
+	
 	http: require('http'),
 	fs: require('fs'),
 	qs: require('querystring'),
@@ -10,7 +15,8 @@ Ext.define('Lapidos.node.server.service.Http', {
 	config: {
 		name: 'node-http',
 		title: 'Node HTTP Server',
-		port: 8080
+		port: 8080,
+		frontController: null
 	},
 	
 	init: function() {
@@ -49,8 +55,28 @@ Ext.define('Lapidos.node.server.service.Http', {
 	},
 	
 	onRequest: function(request, response, path, params) {
-		response.writeHead(200, {'Content-Type': 'text/plain'});
+		// Handle any params
+		var parts = require('url').parse(request.url, true)
+		Ext.apply(params, parts.query);
+		var frontController = new Lapidos.controller.Front();
+		frontController.getRequestParser().applyParams(params);
 		
+		// Set reference to node response object
+		frontController.getResponseManager().setResponse(response);
+		
+		// Set the request string
+		frontController.getRequestParser().setRequestString(path);
+		frontController.getRequestParser().parse();
+		
+		// Run the front controller
+		frontController.run();
+		
+		return;
+		
+		
+		
+		response.writeHead(200, {'Content-Type': 'text/plain'});
+		response.end('');
 		var module = 'index';
 		var action = 'index';
 		if (path.length) {
@@ -60,8 +86,7 @@ Ext.define('Lapidos.node.server.service.Http', {
 				action = parts[1];
 			}
 		}
-		var parts = require('url').parse(request.url, true)
-		Ext.apply(params, parts.query);
+		
 		var eventName = 'request' + module;
 		var methodName = this.getActionName(action);
 		

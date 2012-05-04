@@ -8,16 +8,14 @@ Ext.Loader.setConfig({
 });
 
 var requires = [
-	'Lapidos.JSON',
-	'Lapidos.os.OS',
+	'Lapidos.os.Os',
 	'Lapidos.shell.Console',
 	'Lapidos.node.server.module.Server'
 ];
 
 Ext.require(requires, function() {
-	var os = new Lapidos.os.OS();
+	var os = new Lapidos.os.Os();
 	var shell = new Lapidos.shell.Console(os);
-	
 	var modules = [
 		'Lapidos.node.server.module.Server'
 	];

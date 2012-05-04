@@ -1,9 +1,9 @@
-Ext.define('Lapidos.services.module.Services', {
+Ext.define('Lapidos.services.mobile.module.Services', {
 	extend: 'Lapidos.module.Viewable',
 	
 	requires: [
 		'Lapidos.services.service.ServiceViewer',
-		'Lapidos.services.view.Grid'
+		'Lapidos.services.mobile.view.List'
 	],
 	
 	config: {
@@ -33,17 +33,14 @@ Ext.define('Lapidos.services.module.Services', {
 	initModule: function() {
 		this.callParent(arguments);
 		this.on('initviewhome', function(module, view) {
-			this.initGrid();
-			view.add(this.getGrid());
+			this.initList();
+			view.setActiveItem(this.getList());
 		}, this);
 	},
 	
-	initGrid: function() {
-		this.setGrid(new Lapidos.services.view.Grid({
+	initList: function() {
+		this.setList(new Lapidos.services.mobile.view.List({
 			store: this.getOs().getServiceManager().getStore()
 		}));
-		this.grid.on('notify', function(message) {
-			this.getOs().getServiceManager().callService('notification', 'notify', message);
-		}, this);
 	}
 });

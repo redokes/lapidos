@@ -11,16 +11,18 @@
  * @constructor
  * @param {Object} config The config object
  */
-Ext.define('Lapidos.os.OS', {
+Ext.define('Lapidos.os.Os', {
 	extend: 'Ext.util.Observable',
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Requires
 	///////////////////////////////////////////////////////////////////////////
-	requires:[
+	requires: [
+		'Lapidos.os.Manager',
 		'Lapidos.module.Manager',
 		'Lapidos.service.Manager',
-		'Lapidos.resource.Manager',
+//		'Lapidos.resource.Manager',
+		'Lapidos.audio.Manager',
 		'Lapidos.shell.Shell',
 		'Lapidos.core.module.Core'
 	],
@@ -55,6 +57,7 @@ Ext.define('Lapidos.os.OS', {
 		 * @accessor
 		 */
 		resourceManager: null,
+		audioManager: null,
 		
 		/**
 		 * @cfg {Lapidos.shell.Shell} 
@@ -72,27 +75,27 @@ Ext.define('Lapidos.os.OS', {
 	/**
 	* @event beforeboot
 	* Fires before the OS begins booting
-	* @param {Lapidos.os.OS} os
+	* @param {Lapidos.os.Os} os
 	* @param {Object} config
 	*/
    
    /**
 	* @event boot
 	* Fires when the OS has booted.
-	* @param {Lapidos.os.OS} os
+	* @param {Lapidos.os.Os} os
 	*/
    
    /**
 	* @event initservicemanager
 	* Fires when the service manager has been created.
-	* @param {Lapidos.os.OS} os
+	* @param {Lapidos.os.Os} os
 	* @param {Lapidos.service.Manager} manager
 	*/
    
    /**
 	* @event initmodulemanager
 	* Fires when the module manager has been created.
-	* @param {Lapidos.os.OS} os
+	* @param {Lapidos.os.Os} os
 	* @param {Lapidos.service.Manager} manager
 	*/
 	
@@ -100,6 +103,9 @@ Ext.define('Lapidos.os.OS', {
 	// Inits / Bootup
 	///////////////////////////////////////////////////////////////////////////
 	constructor: function(config) {
+		// Register this os with Lapidos
+		Lapidos.os.Manager.register(this);
+		
 		this.initConfig(config);
 		this.callParent(arguments);
 		this.init();
@@ -112,7 +118,8 @@ Ext.define('Lapidos.os.OS', {
 		this.onBeforeBoot();
 		this.initServiceManager();
 		this.initModuleManager();
-		this.initResourceManager();
+//		this.initResourceManager();
+		this.initAudioManager();
 		this.initShell();
 		this.onBoot();
 	},
@@ -144,6 +151,11 @@ Ext.define('Lapidos.os.OS', {
 	initResourceManager: function() {
 		this.setResourceManager(new Lapidos.resource.Manager(this));
 		this.fireEvent('initresourcemanager', this, this.getResourceManager());
+	},
+	
+	initAudioManager: function() {
+		this.setAudioManager(new Lapidos.audio.Manager(this));
+		this.fireEvent('initaudiomanager', this, this.getAudioManager());
 	},
 	
 	///////////////////////////////////////////////////////////////////////////

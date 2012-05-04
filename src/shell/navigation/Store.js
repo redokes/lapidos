@@ -115,7 +115,7 @@ Ext.define('Lapidos.shell.navigation.Store', {
 					icon: item.module.icon,
 					module: item.module,
 					params: item.params,
-					tags: Ext.apply(existingRecord.get('tags'), item.tags),
+					tags: Ext.Array.merge(existingRecord.get('tags'), item.tags),
 					scope: item.scope,
 					handler: item.handler
 				});

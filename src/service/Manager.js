@@ -1,10 +1,10 @@
 /**
- * Component that is used to manage all services within a Lapidos.os.OS system. 
+ * Component that is used to manage all services within a Lapidos.os.Os system. 
  * The service manager keeps track of all registered services, as well as which services
  * are running and not running.
  * 
  * @constructor
- * @param {Lapidos.os.OS} os
+ * @param {Lapidos.os.Os} os
  * @param {Object} config The config object
  */
 Ext.define('Lapidos.service.Manager', {
@@ -27,7 +27,7 @@ Ext.define('Lapidos.service.Manager', {
 	///////////////////////////////////////////////////////////////////////////
 	
 	/**
-	* @type {Lapidos.os.OS}
+	* @type {Lapidos.os.Os}
 	* 
 	* Operating system being used with this manager
 	*/
@@ -58,7 +58,7 @@ Ext.define('Lapidos.service.Manager', {
 	},
 	
 	initStore: function() {
-		this.store = Ext.create('Ext.data.Store', {
+		this.store = new Ext.data.Store({
 			model: 'Lapidos.service.model.Service'
 		});
 	},
@@ -130,7 +130,7 @@ Ext.define('Lapidos.service.Manager', {
 	
 	/**
 	* Returns the value of {@link #os}
-	* @return {Lapidos.os.OS} os
+	* @return {Lapidos.os.Os} os
 	*/
 	getOs: function(){
 		return this.os;

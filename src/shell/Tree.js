@@ -31,7 +31,7 @@ Ext.define('Lapidos.shell.Tree', {
 			}
 		}, this);
 		
-		this.store = Ext.create('Ext.data.TreeStore', {
+		this.store = new Ext.data.TreeStore({
 			root: {
 				expanded: true,
 				children: children

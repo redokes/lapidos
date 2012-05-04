@@ -45,6 +45,24 @@ Ext.define('Lapidos.node.client.Client', {
 			this.fireEvent('userDisconnect', this, arguments);
 		}, this));
 		
+		this.socket.on('createSharedObject', Ext.bind(function(config) {
+//			console.log('socket on create shared in here');
+			var instance = Ext.create(config.clsName, config)
+			this.fireEvent('createSharedObject', this, instance);
+		}, this));
+		
+		this.socket.on('syncSharedObject', Ext.bind(function(config) {
+//			console.log('socket on sync shared in here');
+			this.fireEvent('syncSharedObject', this, config);
+		}, this));
+		
+		this.socket.on('callSharedMethod', Ext.bind(function(config) {
+//			console.log('call shared method in here');
+//			console.log(arguments);
+			// Get the instance
+			this.fireEvent('callSharedMethod', this, config);
+		}, this));
+		
 	},
 	
 	disconnect: function() {
@@ -57,5 +75,22 @@ Ext.define('Lapidos.node.client.Client', {
     		action: action,
     		data: data
     	});
+	},
+	
+	createSharedObject: function(config, callback) {
+//		console.log('create shared');
+		this.socket.emit('createSharedObject', config, callback);
+	},
+	
+	syncSharedObject: function(config, callback) {
+//		console.log('sync shared');
+//		console.log(arguments);
+		this.socket.emit('syncSharedObject', config);
+	},
+	
+	callSharedMethod: function(config, callback) {
+//		console.log('call shared');
+//		console.log(config);
+		this.socket.emit('callSharedMethod', config);
 	}
 });

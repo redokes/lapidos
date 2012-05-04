@@ -44,7 +44,6 @@ Ext.define('Lapidos.ajax.service.Batcher', {
 	},
 	
 	initListeners: function(){
-		
 		Ext.Ajax.on('beforerequest', function(connection, request) {
 			// Ignore if this request is bulk or a form
 			if (request.ignoreBatch === true || !this.isRunning() || this.getUrl() == null || request.bulk === true || request.async === false || request.form != null) {

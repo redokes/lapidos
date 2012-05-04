@@ -1,15 +1,19 @@
 Ext.define('Lapidos.node.server.Socket', {
 	extend: 'Ext.util.Observable',
+	requires: [
+		'Lapidos.node.server.SharedObject'
+	],
 	
 	config:{
 		socket: null,
-		namespace: null
+		namespace: null,
+		sharedObjects: null
 	},
 	
 	constructor: function(config) {
-//		this.showLog();
         this.addEvents('beforemessage');
 		this.initConfig(config);
+		this.sharedObjects = new Ext.util.MixedCollection();
 		this.initListeners();
 		this.emitConnection();
     },
@@ -25,6 +29,9 @@ Ext.define('Lapidos.node.server.Socket', {
 		this.socket.on('getRemoteUsers', this.onGetRemoteUsers.bind(this));
 		this.socket.on('message', this.onMessage.bind(this));
 		this.socket.on('disconnect', this.onDisconnect.bind(this));
+		this.socket.on('createSharedObject', this.onCreateSharedObject.bind(this));
+		this.socket.on('syncSharedObject', this.onSyncSharedObject.bind(this));
+		this.socket.on('callSharedMethod', this.onCallSharedMethod.bind(this));
 	},
 	
 	emitConnection: function() {
@@ -166,6 +173,38 @@ Ext.define('Lapidos.node.server.Socket', {
 		console.log('Disconnect from ' + this.socket.namespace.name);
 		this.socket.broadcast.emit('otherDisconnect', this.socket.id);
 		this.socket.broadcast.emit('userDisconnect', this.socket.id);
+	},
+	
+	onCreateSharedObject: function(config, callback) {
+//		console.log('create shared');
+//		console.log(config);
+		var so = new Lapidos.node.server.SharedObject(config);
+		this.addSharedObject(so);
+		config.id = so.id;
+		callback(config);
+		this.socket.broadcast.emit('createSharedObject', config);
+	},
+	
+	addSharedObject: function(so) {
+		this.sharedObjects.add(so.id, so);
+		this.namespace.addSharedObject(so);
+	},
+	
+	onRemoveSharedObject: function() {
+//		console.log('remove shared');
+//		console.log(arguments);
+	},
+	
+	onSyncSharedObject: function(config) {
+//		console.log('sync shared');
+//		console.log(config);
+		this.socket.broadcast.emit('syncSharedObject', config);
+	},
+	
+	onCallSharedMethod: function(config) {
+//		console.log('on call shared');
+//		console.log(config);
+		this.socket.broadcast.emit('callSharedMethod', config);
 	}
 	
 });

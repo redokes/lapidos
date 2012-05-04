@@ -1,5 +1,8 @@
 Ext.define('Lapidos.module.Breadcrumb', {
 	extend: 'Ext.toolbar.Toolbar',
+	requires: [
+		'Lapidos.module.Crumb'
+	],
 	dock: 'top',
 	
 	moduleInterface: null,
@@ -52,7 +55,7 @@ Ext.define('Lapidos.module.Breadcrumb', {
 			}
 		}
 		
-		var crumb = Ext.create('Lapidos.module.Crumb', {
+		var crumb = new Lapidos.module.Crumb({
 			scope: this,
 			text: text,
 			view: view,
@@ -60,7 +63,7 @@ Ext.define('Lapidos.module.Breadcrumb', {
 			handler: this.setCrumb
 		});
 		
-		var divider = Ext.create('Ext.button.Button', {
+		var divider = new Ext.button.Button({
 			text: '&gt;&gt;'
 		});
 		

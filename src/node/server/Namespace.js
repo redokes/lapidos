@@ -8,11 +8,13 @@ Ext.define('Lapidos.node.server.Namespace', {
 	config: {
 		io: null,
 		socket: null,
-		name: ''
+		name: '',
+		sharedObjects: null
 	},
 	
 	constructor: function(config) {
 		this.initConfig(config);
+		this.sharedObjects = new Ext.util.MixedCollection();
 //		console.log('Constructor');
 		this.init();
 		return this.callParent(arguments);
@@ -45,7 +47,7 @@ Ext.define('Lapidos.node.server.Namespace', {
 		namespace.on('connection', function(socket) {
 			console.log('Connected to namespace ' + socket.namespace.name);
 			
-			Ext.create('Lapidos.node.server.Socket', {
+			new Lapidos.node.server.Socket({
 				socket: socket,
 				namespace: this
 			});
@@ -69,5 +71,9 @@ Ext.define('Lapidos.node.server.Namespace', {
 	 */
 	getSocket: function(id){
 		return this.io.sockets.sockets[id];
+	},
+	
+	addSharedObject: function(so) {
+		this.sharedObjects.add(so.id, so);
 	}
 });

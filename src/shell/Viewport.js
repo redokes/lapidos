@@ -1,5 +1,8 @@
 Ext.define('Lapidos.shell.Viewport', {
     extend: 'Lapidos.shell.Shell',
+	requires: [
+		'Lapidos.shell.Tree'
+	],
     
 	config: {
 		viewport: null
@@ -13,7 +16,7 @@ Ext.define('Lapidos.shell.Viewport', {
 	},
 	
 	initViewport: function() {
-		this.viewport = Ext.create('Ext.Viewport', {
+		this.viewport = new Ext.Viewport({
 			layout: 'border',
 			items: [
 				this.center,
@@ -23,7 +26,7 @@ Ext.define('Lapidos.shell.Viewport', {
 	},
 	
 	initCenter: function() {
-		this.center = Ext.create('Ext.panel.Panel', {
+		this.center = new Ext.panel.Panel({
 			title: 'Center',
 			region: 'center',
 			layout: 'card'
@@ -31,7 +34,7 @@ Ext.define('Lapidos.shell.Viewport', {
 	},
 	
 	initWest: function() {
-		this.west = Ext.create('Ext.panel.Panel', {
+		this.west = new Ext.panel.Panel({
 			title: 'West',
 			region: 'west',
 			width: 200,
@@ -40,7 +43,7 @@ Ext.define('Lapidos.shell.Viewport', {
 	},
 	
 	initLauncher: function() {
-		this.launcher = Ext.create('Lapidos.shell.Tree', {
+		this.launcher = new Lapidos.shell.Tree({
 			shell: this
 			
 		});

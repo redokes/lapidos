@@ -99,7 +99,7 @@ Ext.define('Lapidos.node.client.service.Manager', {
 		 * Create the client object for the namespace connection and keep track
 		 * of it in the namespaces propery
 		 */
-		client = Ext.create('Lapidos.node.client.Client', {
+		client = new Lapidos.node.client.Client({
 			url: this.getServerUrl(),
 			name: name
 		});

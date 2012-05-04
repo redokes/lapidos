@@ -1,5 +1,5 @@
 /**
- * Base service class that all services extend that are used within a Lapidos.os.OS system. 
+ * Base service class that all services extend that are used within a Lapidos.os.Os system. 
  * A service is a shared group of functions that any other service and module can access within 
  * the system.
  * 
@@ -47,9 +47,9 @@ Ext.define('Lapidos.service.Service', {
 		title: '',
 		
 		/**
-		 * @cfg {Lapidos.os.OS} 
+		 * @cfg {Lapidos.os.Os} 
 		 * 
-		 * A reference to the main {@link Lapidos.os.OS operating system}
+		 * A reference to the main {@link Lapidos.os.Os operating system}
 		 * 
 		 * @accessor
 		 */
@@ -86,7 +86,7 @@ Ext.define('Lapidos.service.Service', {
 	constructor: function(config) {
 		this.initConfig(config);
 		
-		this.persistentEvents = Ext.create('Ext.util.MixedCollection');
+		this.persistentEvents = new Ext.util.MixedCollection();
 		this.persistentEvents.addAll([
 			'start',
 			'stop'

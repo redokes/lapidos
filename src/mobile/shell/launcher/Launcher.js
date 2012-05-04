@@ -7,15 +7,12 @@ Ext.define('Lapidos.mobile.shell.launcher.Launcher', {
 		viewConfig: {
 			home: {
 				cls: 'Lapidos.mobile.shell.launcher.view.View'
-			},
-			mobilehome: {
-				cls: 'Lapidos.mobile.shell.launcher.view.View'
 			}
 		}
 	},
 	
 	init: function() {
-		this.on('initviewmobilehome', function(module, view) {
+		this.on('initviewhome', function(module, view) {
 			view.setStore(this.getManager().getStore());
 		}, this);
 	}

@@ -25,7 +25,7 @@ Ext.define('Lapidos.mobile.shell.launcher.view.Interface', {
 	},
 	
 	initModuleView: function(){
-		this.setModuleView(Ext.create('Lapidos.mobile.shell.launcher.view.View'));
+		this.setModuleView(new Lapidos.mobile.shell.launcher.view.View());
 		this.add(this.moduleView);
 	}
 	
