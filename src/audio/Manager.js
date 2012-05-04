@@ -16,8 +16,7 @@ Ext.define('Lapidos.audio.Manager', {
 		'Lapidos.audio.model.Audio',
 		'Lapidos.audio.model.Channel',
 		'Lapidos.audio.model.Group',
-		'Lapidos.audio.Group',
-		'Lapidos.audio.Audio'
+		'Lapidos.audio.Group'
 	],
 	
 	mixins: {

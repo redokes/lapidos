@@ -83,8 +83,6 @@ Ext.define('Lapidos.audio.Channel', {
 		}, this);
 	},
 	
-	
-	
 	/**
 	 * currentTime
 	 * duration
@@ -105,7 +103,7 @@ Ext.define('Lapidos.audio.Channel', {
 		
 		var audio;
 		if (typeof src == 'string') {
-			audio = new Lapidos.audio.Audio({
+			audio = new Lapidos.audio.model.Audio({
 				src: src
 			});
 		}
@@ -181,23 +179,6 @@ Ext.define('Lapidos.audio.Channel', {
 			this.startPlaying(this.playQueue[0]);
 			this.playQueue.splice(0, 1);
 		}
-	},
-	
-	// playAudio: function(audio) {
-		// audio.dom.play();
-		// this.fireEvent('play', audio);
-	// },
-// 	
-	// createAudio: function(src, options) {
-		// return;
-		// el.on('ended', function(e, el) {
-			// console.log('ended');
-			// var record = this.getStore().findRecord('id', el.id)
-			// console.log(record);
-			// this.getStore().remove(record);
-		// }, this);
-// 		
-		// return el;
-	// },
+	}
 	
 });
