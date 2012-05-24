@@ -386,6 +386,7 @@ Ext.define('Lapidos.module.Viewable', {
 			};
 		}
 		return {
+		    target: this,
 			eventName: 'initview' + type
 		};
 	},
