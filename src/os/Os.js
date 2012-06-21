@@ -21,8 +21,6 @@ Ext.define('Lapidos.os.Os', {
 		'Lapidos.os.Manager',
 		'Lapidos.module.Manager',
 		'Lapidos.service.Manager',
-//		'Lapidos.resource.Manager',
-		'Lapidos.audio.Manager',
 		'Lapidos.shell.Shell',
 		'Lapidos.core.module.Core'
 	],
@@ -49,15 +47,6 @@ Ext.define('Lapidos.os.Os', {
 		 * @accessor
 		 */
 		serviceManager: null,
-		
-		/**
-		 * @cfg {Lapidos.resource.Manager} 
-		 * Resource manager used to manage resources with the system. 
-		 * 
-		 * @accessor
-		 */
-		resourceManager: null,
-		audioManager: null,
 		
 		/**
 		 * @cfg {Lapidos.shell.Shell} 
@@ -118,8 +107,6 @@ Ext.define('Lapidos.os.Os', {
 		this.onBeforeBoot();
 		this.initServiceManager();
 		this.initModuleManager();
-//		this.initResourceManager();
-		this.initAudioManager();
 		this.initShell();
 		this.onBoot();
 	},
@@ -146,16 +133,6 @@ Ext.define('Lapidos.os.Os', {
 		this.fireEvent('initmodulemanager', this, this.getModuleManager());
 		
 		this.getModuleManager().register('Lapidos.core.module.Core');
-	},
-	
-	initResourceManager: function() {
-		this.setResourceManager(new Lapidos.resource.Manager(this));
-		this.fireEvent('initresourcemanager', this, this.getResourceManager());
-	},
-	
-	initAudioManager: function() {
-		this.setAudioManager(new Lapidos.audio.Manager(this));
-		this.fireEvent('initaudiomanager', this, this.getAudioManager());
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
