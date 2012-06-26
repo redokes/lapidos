@@ -5,3 +5,5 @@ test*.php
 .project
 .settings/
 /nbproject/*
+/resources/.sass-cache/
+/resources/sass/.sass-cache/
