@@ -1,0 +1,102 @@
+/******************************************************
+* Lapidos shell navigation
+******************************************************/
+/*
+$tab-spacing: 2px;
+$tab-height: 40px;
+$tab-font-size: 16px;
+$tab-base-color: #eaeaea;
+$tab-color-active: #333333;
+$tab-background-gradient: color-stops(#dcdcdc, #eaeaea);
+$tab-background-gradient-over: 'tab-over' !default;
+$tab-background-gradient-active: color-stops(#eaeaea, #ffffff);
+$tab-background-gradient-disabled: 'tab-disabled' !default;
+*/
+.lapidos-shell-navigation{
+  @include background-image(linear-gradient($navigation-light-color, $navigation-dark-color));
+  border-bottom: 1px solid #000;
+}
+.lapidos-shell-navigation-container{
+  z-index: 500;
+  overflow: visible;
+}
+
+.lapidos-shell-navigation-container .x-box-inner{
+  overflow: visible;
+}
+
+.lapidos-shell-navigation{
+  height: 40px;
+  overflow: visible;
+  z-index: 500;
+}
+
+.lapidos-shell-navigation-item {
+  position: relative;
+  float: left;
+  display: inline;
+  padding: 10px;
+  height: 40px;
+  cursor: pointer;
+  color: #eeeeee;
+  font-size: 16px;
+  font-family: 'Lucida Grande';
+  font-weight: bold;
+  border-right: 1px solid darken($navigation-dark-color, 5)
+}
+
+.navigation-settings{
+    
+    .lapidos-shell-navigation-item{
+        float: right;
+        border-left: 1px solid darken($navigation-dark-color, 5);
+        border-right: 0px;
+    }
+} 
+
+.lapidos-shell-navigation-item-icon .lapidos-shell-navigation-item-display {
+  padding-left: 30px;
+}
+
+.lapidos-shell-navigation-item-image {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+}
+.lapidos-shell-navigation-item-image img {
+  width: 24px;
+}
+
+.lapidos-shell-navigation-item-over, .lapidos-shell-navigation-item-active {
+  color: #94B52C;
+}
+
+.lapidos-shell-navigation-sub-menu {
+  display: none;
+  
+  li{
+      @include background-image(linear-gradient($navigation-light-color, $navigation-dark-color));
+  }
+}
+
+.lapidos-shell-navigation-sub-menu .lapidos-shell-navigation-item {
+  width: 120px;
+}
+
+.lapidos-shell-navigation-sub-menu .lapidos-shell-navigation-item:last-child {
+  border-radius: 0px 0px 5px 5px;
+}
+
+.lapidos-shell-navigation-menu li:hover > .lapidos-shell-navigation-sub-menu {
+    position: absolute;
+  display: block;
+  top: 40px;
+  left: 0px;
+} 
+
+.lapidos-shell-navigation-sub-menu li:hover > .lapidos-shell-navigation-sub-menu {
+    position: absolute;
+  display: block;
+  top: 0;
+  left: 120px;
+}
