@@ -13,10 +13,8 @@ Ext.define('Lapidos.audio.Manager', {
 	///////////////////////////////////////////////////////////////////////////
 	requires:[
 		'Lapidos.mixin.Event',
-		'Lapidos.audio.model.Audio',
-		'Lapidos.audio.model.Channel',
 		'Lapidos.audio.model.Group',
-		'Lapidos.audio.Group'
+		'Lapidos.audio.model.Audio',
 	],
 	
 	mixins: {
@@ -27,60 +25,75 @@ Ext.define('Lapidos.audio.Manager', {
 	// Properties
 	///////////////////////////////////////////////////////////////////////////
 	
-	/**
-	* @type {Lapidos.os.Os}
-	* 
-	* Operating system being used with this manager
-	*/
-	os: null,
-	
 	config: {
-		numLoading: 0,
-		store: null,
-		channels: null,
-		groups: null
+		groupStore: null,
+		os: null
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Inits
 	///////////////////////////////////////////////////////////////////////////
 	constructor: function(os, config) {
+		this.setOs(os);
 		this.initConfig(config);
-		this.os = os;
 		this.callParent([config]);
 		this.init();
 	},
 	
-	init: function(){
-		this.initGroups();
-		this.initChannels();
-		this.initStore();
+	init: function() {
+		this.initGroupStore();
 	},
 	
-	initGroups: function() {
-		this.setGroups(new Ext.data.Store({
+	initGroupStore: function() {
+		
+		// Create the data store for group records
+		this.setGroupStore(new Ext.data.Store({
 			model: 'Lapidos.audio.model.Group'
 		}));
-	},
-	
-	initChannels: function() {
-		this.setChannels(new Ext.data.Store({
-			model: 'Lapidos.audio.model.Channel'
-		}));
-	},
-	
-	initStore: function() {
-		this.setStore(new Ext.data.Store({
-			model: 'Lapidos.audio.model.Audio'
-		}));
-	},
-	
-	createGroup: function(name) {
-		var group = new Lapidos.audio.Group({
-			name: name,
-			manager: this
+		
+		// Create master group
+		this.createGroup({
+			name: 'master',
+			title: 'Master'
 		});
+		var master = this.getGroup('master');
+//		var channel = master.createQueuedChannel('Music');
+//		var channel2 = master.createChannel('Music 2');
+//		var channel3 = master.createChannel('Test 3');
+//		
+//		channel.play('/1.mp3');
+//		setTimeout(function() {
+//			channel.play('/2.mp3');
+//		}, 6000);
+		
+		// Create groups for registered modules
+		var moduleManager = this.getOs().getModuleManager();
+		var items = moduleManager.getStore().data.items;
+		var numItems = items.length;
+		for (var i = 0; i < numItems; i++) {
+			var instance = items[i].get('instance');
+			this.createGroup({
+				name: instance.getName(),
+				title: instance.getTitle(),
+				icon: instance.getIcon(),
+				module: instance
+			});
+		}
+		
+	},
+	
+	createGroup: function(config) {
+		var group = new Lapidos.audio.model.Group(config);
+		this.getGroupStore().add(group);
 		return group;
+	},
+	
+	getGroup: function(name) {
+		return this.getGroupStore().findRecord('name', name);
+	},
+	
+	removeGroup: function(record) {
+		this.getGroupStore().remove(record);
 	}
 	
 });

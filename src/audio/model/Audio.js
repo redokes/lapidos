@@ -62,12 +62,21 @@ Ext.define('Lapidos.audio.model.Audio', {
 	},{
 		name: 'src',
 		type: 'string'
-	}, {
+	},{
 		name: 'isLoading',
 		defaultValue: false
-	}, {
+	},{
 		name: 'isLoaded',
 		defaultValue: false
+	},{
+		name: 'volume',
+		defaultValue: 1
+	},{
+		name: 'relativeVolume',
+		defaultValue: 1
+	},{
+		name: 'realVolume',
+		defaultValue: 1
 	}],
 	
 	proxy:{
@@ -78,6 +87,7 @@ Ext.define('Lapidos.audio.model.Audio', {
 		}
 	},
 	
+	oldVolume: 1,
 	playing: false,
 	paused: false,
 	
@@ -88,29 +98,28 @@ Ext.define('Lapidos.audio.model.Audio', {
 	setEl: function(el) {
 		this.set('el', el)
 	},
-	getSrc: function() {
-		return this.get('src')
-	},
-	setSrc: function(src) {
-		console.log('set src method');
-		if (!this.get('el')) {
-			this.initEl();
-			this.initListeners();
-		}
-		this.getEl().dom.src = src;
-	},
+	
 	getPreload: function() {
 		return this.get('preload')
 	},
 	
 	constructor: function() {
 		this.callParent(arguments);
+		this.initAudio();
+	},
+	
+	initAudio: function() {
+		if (this.get('src')) {
+			this.initEl();
+			this.initListeners();
+			this.getEl().dom.src = this.get('src');
+		}
 	},
 	
 	initEl: function() {
 		var options = {
 			tag: 'audio',
-			src: this.getSrc(),
+			src: this.get('src'),
 			preload: this.getPreload()
 		};
 		this.setEl(Ext.get(Ext.DomHelper.createDom(options)));
@@ -177,7 +186,13 @@ Ext.define('Lapidos.audio.model.Audio', {
 	
 	play: function() {
 		this.playing = true;
-		this.getEl().dom.play();
+		if (this.paused) {
+			this.getEl().dom.play();
+		}
+		else {
+			this.seek(0);
+			this.getEl().dom.play();
+		}
 	},
 	
 	stop: function() {
@@ -188,11 +203,11 @@ Ext.define('Lapidos.audio.model.Audio', {
 		}
 	},
 	
-	getVolume: function() {
+	getElVolume: function() {
 		return this.getEl().dom.volume;
 	},
 	
-	setVolume: function(volume) {
+	setElVolume: function(volume) {
 		this.getEl().dom.volume = volume;
 	},
 	
@@ -204,7 +219,7 @@ Ext.define('Lapidos.audio.model.Audio', {
 		if (offset < 0) {
 			offset = this.getEl().dom.duration - offset;
 		}
-		if (offset > 0 && offset < this.getEl().dom.duration) {
+		if (offset >= 0 && offset < this.getEl().dom.duration) {
 			this.getEl().dom.currentTime = offset;
 		}
 	},
@@ -238,5 +253,47 @@ Ext.define('Lapidos.audio.model.Audio', {
 	
 	isPaused: function(){
 		return this.paused;
+	},
+	
+	setVolume: function(volume) {
+		if (volume > 1 && volume <= 100) {
+			volume /= 100;
+		}
+		
+		this.set('volume', volume);
+		
+		if (volume > 0) {
+			this.oldVolume = this.get('volume');
+		}
+		
+		this.setRealVolume(this.get('volume') * this.get('relativeVolume'));
+		
+		this.fireEvent('volumechange', this, volume);
+	},
+	
+	setRelativeVolume: function(volume) {
+		if (volume > 1 && volume <= 100) {
+			volume /= 100;
+		}
+		this.set('relativeVolume', volume);
+		this.setRealVolume(this.get('volume') * this.get('relativeVolume'));
+	},
+	
+	setRealVolume: function(volume) {
+		if (volume > 1 && volume <= 100) {
+			volume /= 100;
+		}
+		this.set('realVolume', volume);
+		
+		this.setElVolume(this.get('realVolume'));
+	},
+	
+	mute: function() {
+		this.setVolume(0);
+	},
+	
+	unmute: function() {
+		this.setVolume(this.oldVolume);
 	}
+	
 });
