@@ -378,7 +378,7 @@ Ext.define('Lapidos.module.Viewable', {
 	},
 	
 	onViewReady: function(options) {
-		var type = options.type || this.getViewDefault();
+		var type = options.view || options.type || this.getViewDefault();
 		var record = this.viewStore.findRecord('type', type);
 		if (record != null && record.get('loaded')) {
 			return {
@@ -402,7 +402,7 @@ Ext.define('Lapidos.module.Viewable', {
 		var functionName = 'showView' + view.charAt(0).toUpperCase() + view.slice(1);
 		//params.showViewFunction = functionName;
 		if(Ext.isFunction(this[functionName])){
-			this.onReady('view', function(viewable, view, options){
+			this.onReady('view', function(viewable, view, options) {
 				Ext.defer(this[functionName], 1, this, arguments);
 			}, this, params);
 //			this.onViewReady(this[functionName], this, params);
