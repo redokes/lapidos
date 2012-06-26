@@ -53,7 +53,7 @@ Ext.define('Lapidos.service.Manager', {
 		this.init();
 	},
 	
-	init: function(){
+	init: function() {
 		this.initStore();
 	},
 	
@@ -187,7 +187,9 @@ Ext.define('Lapidos.service.Manager', {
 			for (var i = 2; i < numArgs; i++) {
 				args.push(arguments[i]);
 			}
-			service[method].apply(service, args);
+			if (Ext.isFunction(service[method])) {
+				return service[method].apply(service, args);
+			}
 		}
 	},
 	
