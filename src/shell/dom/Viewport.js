@@ -1,68 +1,111 @@
 Ext.define('Lapidos.shell.dom.Viewport', {
     extend: 'Lapidos.shell.Shell',
 	requires: [
-		'Lapidos.shell.Tree'
+		'Lapidos.shell.dom.Tree',
+		'Lapidos.shell.navigation.Dom'
 	],
     
 	config: {
-		viewport: null
+		view: null,
+		center: null
 	},
 	
     init: function() {
 		this.initCenter();
+		this.initNorth();
+		this.initSouth();
+		this.initEast();
 		this.initWest();
 		this.initViewport();
+		this.initNav();
 		this.initLauncher();
-	},
-	
-	initViewport: function() {
-		this.viewport = new Ext.Viewport({
-			layout: 'border',
-			items: [
-				this.center,
-				this.west
-			]
-		});
 	},
 	
 	initCenter: function() {
 		this.center = new Ext.panel.Panel({
-			title: 'Center',
 			region: 'center',
 			layout: 'card'
 		});
 	},
 	
-	initWest: function() {
-		this.west = new Ext.panel.Panel({
-			title: 'West',
-			region: 'west',
-			width: 200,
+	initNorth: function() {
+		this.north = new Ext.container.Container({
+            region: 'north',
+            cls: 'lapidos-shell-navigation-container',
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            height: 40
+        });
+	},
+	
+	initSouth: function() {
+		this.south = new Ext.container.Container({
+			region: 'south',
+			height: 40,
 			layout: 'fit'
 		});
 	},
 	
+	initEast: function() {
+		this.east = new Ext.container.Container({
+			region: 'east',
+			width: 100,
+			layout: 'fit'
+		});
+	},
+	
+	initWest: function() {
+		this.west = new Ext.container.Container({
+			region: 'west',
+			width: 100,
+			layout: 'fit'
+		});
+	},
+	
+	initViewport: function() {
+		this.setView(new Ext.Viewport({
+			layout: 'border',
+			items: [
+				this.center,
+				this.north
+			]
+		}));
+	},
+	
+	initNav: function() {
+		this.nav = new Lapidos.shell.navigation.Dom({
+			store: this.getNavigationStore()
+		});
+		this.north.add(this.nav);
+	},
+	
 	initLauncher: function() {
-		this.launcher = new Lapidos.shell.Tree({
+		this.launcher = new Lapidos.shell.dom.Tree({
 			shell: this
 			
 		});
 		this.west.add(this.launcher);
 	},
 	
-	getCenter: function() {
-		return this.center;
-	},
-	
 	setActiveView: function(view) {
 		this.getCenter().getLayout().setActiveItem(view);
 	},
 	
-	launchModule: function(manager, module) {
-		if (module.isViewable != null && module.isViewable) {
-			this.getCenter().add(module.view);
-			this.setActiveView(module.view);
-		}
-	}
+	getActive: function(){
+        return this.getCenter().getLayout().getActiveItem();
+    },
+	
+	onModuleLaunch: function(manager, module, launchParams){
+        this.callParent(arguments);
+        if(Ext.isFunction(module.isViewable) && module.isViewable()){
+            this.getCenter().setLoading('Loading ' + module.getName() + '...');
+            module.getActiveView(function(view){
+                this.getCenter().setLoading(false);
+                this.setActiveView(view);
+            }, this);
+        }
+    }
 	
 });
