@@ -193,6 +193,7 @@ Ext.define('Lapidos.audio.model.Audio', {
 			this.seek(0);
 			this.getEl().dom.play();
 		}
+		this.paused = false;
 	},
 	
 	stop: function() {
@@ -216,8 +217,12 @@ Ext.define('Lapidos.audio.model.Audio', {
 	},
 	
 	seek: function(offset) {
+		var duration = this.getEl().dom.duration;
+		if (!duration) {
+			return;
+		}
 		if (offset < 0) {
-			offset = this.getEl().dom.duration - offset;
+			offset = this.getEl().dom.duration + offset;
 		}
 		if (offset >= 0 && offset < this.getEl().dom.duration) {
 			this.getEl().dom.currentTime = offset;

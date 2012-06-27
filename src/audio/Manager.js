@@ -27,7 +27,8 @@ Ext.define('Lapidos.audio.Manager', {
 	
 	config: {
 		groupStore: null,
-		os: null
+		os: null,
+		master: null
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -52,14 +53,22 @@ Ext.define('Lapidos.audio.Manager', {
 		}));
 		
 		// Create master group
-		this.createGroup({
+		var master = this.createGroup({
 			name: 'master',
 			title: 'Master'
 		});
-		var master = this.getGroup('master');
-//		var channel = master.createQueuedChannel('Music');
-//		var channel2 = master.createChannel('Music 2');
-//		var channel3 = master.createChannel('Test 3');
+		this.setMaster(master);
+		master.manager = this;
+		
+//		var wes = this.createGroup({
+//			name: 'wes',
+//			title: 'Wes'
+//		});
+//		
+//		var channel = wes.createQueuedChannel('Music');
+//		window.channel = channel;
+//		var channel2 = wes.createChannel('Music 2');
+//		var channel3 = wes.createChannel('Test 3');
 //		
 //		channel.play('/1.mp3');
 //		setTimeout(function() {
@@ -90,6 +99,10 @@ Ext.define('Lapidos.audio.Manager', {
 	
 	getGroup: function(name) {
 		return this.getGroupStore().findRecord('name', name);
+	},
+	
+	getGroups: function() {
+		return this.getGroupStore().data.items;
 	},
 	
 	removeGroup: function(record) {

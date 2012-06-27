@@ -21,6 +21,12 @@ Ext.define('Lapidos.audio.model.Group', {
 	},{
 		name: 'volume',
 		defaultValue: 1
+	},{
+		name: 'relativeVolume',
+		defaultValue: 1
+	},{
+		name: 'realVolume',
+		defaultValue: 1
 	}],
 	
 	proxy: {
@@ -99,13 +105,39 @@ Ext.define('Lapidos.audio.model.Group', {
 			this.oldVolume = this.get('volume');
 		}
 		
+		this.setRealVolume(this.get('volume') * this.get('relativeVolume'));
+		this.fireEvent('volumechange', this, volume);
+	},
+	
+	setRelativeVolume: function(volume) {
+		if (volume > 1 && volume <= 100) {
+			volume /= 100;
+		}
+		this.set('relativeVolume', volume);
+		this.setRealVolume(this.get('volume') * this.get('relativeVolume'));
+	},
+	
+	setRealVolume: function(volume) {
+		if (volume > 1 && volume <= 100) {
+			volume /= 100;
+		}
+		this.set('realVolume', volume);
+		
+		if (this.get('title') == 'Master') {
+			var groups = this.manager.getGroups();
+			var numGroups = groups.length;
+			for (var i = 0; i < numGroups; i++) {
+				if (groups[i] != this) {
+					groups[i].setRelativeVolume(volume);
+				}
+			}
+		}
+		
 		var channels = this.getChannels();
 		var numChannels = channels.length;
 		for (var i = 0; i < numChannels; i++) {
 			channels[i].setRelativeVolume(volume);
 		}
-		
-		this.fireEvent('volumechange', this, volume);
 	},
 	
 	mute: function() {

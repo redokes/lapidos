@@ -96,11 +96,11 @@ Ext.define('Lapidos.audio.model.Channel', {
 	},
 	
 	play: function(audio) {
-		if (audio == null && this.getCurrentAudio()) {
-			this.getCurrentAudio().play();
-			return;
+		var currentAudio = this.getCurrentAudio();
+		if (audio == null && currentAudio) {
+			currentAudio.play();
+			return currentAudio;
 		}
-		
 		audio = audio || this.getCurrentAudio();
 		if (typeof(audio) == 'string') {
 			audio = new Lapidos.audio.model.Audio({
@@ -129,21 +129,15 @@ Ext.define('Lapidos.audio.model.Channel', {
 	},
 	
 	pause: function() {
-		if (this.getCurrentAudio()) {
-			this.getCurrentAudio().pause();
+		var audioItems = this.getAudioItems();
+		var numAudioItems = audioItems.length;
+		for (var i = 0; i < numAudioItems; i++) {
+			audioItems[i].pause()
 		}
 	},
 	
 	togglePause: function() {
-		var currentAudio = this.getCurrentAudio();
-		if (currentAudio) {
-			if (currentAudio.paused) {
-				currentAudio.play();
-			}
-			else {
-				currentAudio.pause();
-			}
-		}
+		
 	},
 	
 	getAudioItems: function() {

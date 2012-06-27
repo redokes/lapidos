@@ -28,7 +28,8 @@ Ext.define('Lapidos.audio.view.VolumeControl', {
 	
 	init: function() {
 		this.initSlider();
-		this.initMuteIcon();
+		this.initButtonPanel();
+		this.initButtons();
 		this.initListeners();
 	},
 	
@@ -56,8 +57,14 @@ Ext.define('Lapidos.audio.view.VolumeControl', {
 		}));
 	},
 	
-	initMuteIcon: function() {
-		this.muteIcon = this.add(new Ext.button.Button({
+	initButtonPanel: function() {
+		this.buttonPanel = this.add(new Ext.container.Container({
+			height: 50
+		}));
+	},
+	
+	initButtons: function() {
+		this.muteIcon = this.buttonPanel.add(new Ext.button.Button({
 			scope: this,
 			enableToggle: true,
 			icon: '/js/lapidos/src/audio/img/audio-16.png',

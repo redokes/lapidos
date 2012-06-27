@@ -11,9 +11,23 @@ Ext.define('Lapidos.audio.model.channel.Queued', {
 		return this.play(this.getAudioStore().getAt(this.getNextIndex()), true);
 	},
 	
+	playPrevious: function() {
+		console.log('Play previous');
+		return this.play(this.getAudioStore().getAt(this.getPreviousIndex()), true);
+	},
+	
 	getNextIndex: function() {
 		var numRecords = this.getAudioItems().length;
 		return (this.getCurrentIndex() + 1) % numRecords;
+	},
+	
+	getPreviousIndex: function() {
+		var numRecords = this.getAudioItems().length;
+		var currentIndex = this.getCurrentIndex() - 1;
+		if (currentIndex < 0) {
+			currentIndex = numRecords - 1;
+		}
+		return currentIndex;
 	},
 	
 	getNumAudioItems: function() {
@@ -29,12 +43,22 @@ Ext.define('Lapidos.audio.model.channel.Queued', {
 		if (now != null || this.getNumAudioItems() == 1) {
 			if (this.getNumAudioItems() >= 1) {
 				this.getCurrentAudio().stop();
+				this.getCurrentAudio().seek(0);
 			}
+			audio.seek(0);
 			audio.play();
 			this.setCurrentIndex(this.getAudioStore().indexOf(audio));
 		}
 		
 		return audio;
+	},
+	
+	enqueue: function(audio) {
+		this.callParent(arguments);
+		
+		audio.on('ended', function(audio) {
+			this.playNext();
+		}, this);
 	},
 	
 //	startPlaying: function(audio) {
