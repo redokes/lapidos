@@ -85,6 +85,7 @@ Ext.define('Lapidos.controller.request.Parser', {
 	getModuleName: function(str) {
 		str = str || this.getModule();
 		str = str.toLowerCase();
+		str = str.replace('.', '');
 		var parts = str.split('-');
 		var numParts = parts.length;
 		for (var i = 1; i < numParts; i++) {
