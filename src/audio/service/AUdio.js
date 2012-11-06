@@ -41,8 +41,16 @@ Ext.define('Lapidos.audio.service.Audio', {
 		return this.getManager().getGroupStore().data.items;
 	},
 	
-	getGroup: function() {
-		
+	getGroup: function(name) {
+		return this.getManager().getGroup(name);
+	},
+	
+	createChannel: function(groupName, channelName) {
+		var group = this.getGroup(groupName);
+		if (group) {
+			return group.createChannel(channelName);
+		}
+		return null;
 	},
 	
 	initListeners: function() {
