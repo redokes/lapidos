@@ -258,6 +258,7 @@ Ext.define('Lapidos.module.Module', {
 	},
 
 	onRegister: Ext.emptyFn,
+	onAfterRegister: Ext.emptyFn,
 	
 	/**
 	* Method that runs right after a method has been launched
