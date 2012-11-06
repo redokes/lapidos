@@ -71,7 +71,7 @@ Ext.define('Lapidos.node.server.service.Http', {
 		// Run the front controller
 		frontController.run();
 		
-		return;
+//		return;
 		
 		
 		

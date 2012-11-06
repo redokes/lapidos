@@ -104,12 +104,9 @@ Ext.define('Lapidos.service.Manager', {
 		
 		//Try to load the service
 		var instance = Ext.create(cls, config);
-
 		instance.on('start', this.onStart, this);
 		instance.on('stop', this.onStop, this);
-
 		instance.checkAutoStart();
-
 		if (instance.getName() != null) {
 			var records = this.store.add({
 				instance: instance,
