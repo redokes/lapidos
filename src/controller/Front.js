@@ -35,13 +35,19 @@ Ext.define('Lapidos.controller.Front', {
 		// Look for controller class
 		var controllerClassName = 'Lapidos.' + moduleName + '.controller.' + controllerName;
 		var errorControllerClassName = moduleName + '.controller.Error';
+		console.log(controllerClassName);
 		try {
 			Ext.require(controllerClassName, function() {
-				var controllerClass = Ext.create(controllerClassName, {
-					frontController: this,
-					action: actionName
-				});
+//				var controllerClass = Ext.create(controllerClassName, {
+//					frontController: this,
+//					action: actionName
+//				});
 			}.bind(this));
+			
+			var controllerClass = Ext.create(controllerClassName, {
+				frontController: this,
+				action: actionName
+			});
 		}
 		catch(e) {
 			this.getResponseManager().sendHeaders();
