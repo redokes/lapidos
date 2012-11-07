@@ -11,6 +11,7 @@ Ext.define('Lapidos.shell.dom.Viewport', {
 	},
 	
     init: function() {
+		this.callParent(arguments);
 		this.initCenter();
 		this.initNorth();
 		this.initSouth();
