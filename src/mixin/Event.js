@@ -27,13 +27,17 @@ Ext.define('Lapidos.mixin.Event', {
 				// Set this callback to single so it only fires once
 				options.single = true;
 				
-				// Store data so we can make the original onReady call again
+				// Store original onReady data so we can make the call again
 				options._callback = callback;
 				options._eventName = eventName;
 				options._scope = scope;
 				
 				// Listen for the new event name to be fired from this object
-				this.on(returnData, function(options) {
+				this.on(returnData, function() {
+					var options = {};
+					if (arguments.length) {
+						options = arguments[arguments.length - 1];
+					}
 					
 					// Call the original onReady call with the original data
 					// Because the condition should be satisfied now
