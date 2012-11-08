@@ -382,7 +382,7 @@ Ext.define('Lapidos.module.Viewable', {
 		var type = options.view || options.type || this.getViewDefault();
 		var record = this.viewStore.findRecord('type', type);
 		if (record != null && record.get('loaded')) {
-			return [this, record.get('instance')];
+			return [this, record.get('instance'), options];
 		}
 		return 'initview' + type;
 	},
@@ -392,7 +392,7 @@ Ext.define('Lapidos.module.Viewable', {
 		this.initView(params[this.getViewParam()] || this.getViewDefault());
 	},
 	
-	onLaunch: function(params){
+	onLaunch: function(params) {
 		this.callParent(arguments);
 		var view = params[this.getViewParam()] || this.getViewDefault();
 		var functionName = 'showView' + view.charAt(0).toUpperCase() + view.slice(1);
