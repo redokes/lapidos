@@ -94,15 +94,15 @@ Ext.define('Lapidos.shell.dom.Viewport', {
 		this.getCenter().getLayout().setActiveItem(view);
 	},
 	
-	getActive: function(){
+	getActive: function() {
         return this.getCenter().getLayout().getActiveItem();
     },
 	
-	onModuleLaunch: function(manager, module, launchParams){
+	onModuleLaunch: function(manager, module, launchParams) {
         this.callParent(arguments);
-        if(Ext.isFunction(module.isViewable) && module.isViewable()){
+        if (Ext.isFunction(module.isViewable) && module.isViewable()) {
             this.getCenter().setLoading('Loading ' + module.getName() + '...');
-            module.getActiveView(function(view){
+            module.getActiveView(function(view) {
                 this.getCenter().setLoading(false);
                 this.setActiveView(view);
             }, this);
