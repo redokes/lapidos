@@ -229,16 +229,10 @@ Ext.define('Lapidos.service.Manager', {
 		var instance = this.getInstance(options.name);
 		if (instance != null) {
 			if (instance.isRunning()) {
-				return {
-					params: [this.get(options.name).get('instance'), options]
-				}
+				return [this.get(options.name).get('instance'), options];
 			}
 			else {
-				// Just listen for when this service starts instead of every service
-				return {
-					eventName: 'start',
-					target: instance
-				}
+				return 'start';
 			}
 		}
 	},

@@ -378,17 +378,13 @@ Ext.define('Lapidos.module.Viewable', {
 	},
 	
 	onViewReady: function(options) {
+		// TODO: revisit this property name. it shouldn't be either view or type
 		var type = options.view || options.type || this.getViewDefault();
 		var record = this.viewStore.findRecord('type', type);
 		if (record != null && record.get('loaded')) {
-			return {
-				params: [this, record.get('instance')]
-			};
+			return [this, record.get('instance')];
 		}
-		return {
-		    target: this,
-			eventName: 'initview' + type
-		};
+		return 'initview' + type;
 	},
 	
 	onBeforeLaunch: function(params){
