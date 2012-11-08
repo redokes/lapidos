@@ -48,13 +48,14 @@ Ext.define('Lapidos.audio.module.Chart', {
 		for (var key in legendMap) {
 			series.push({
 				type: 'line',
+				smooth: true,
 				highlight: {
 					size: 7,
 					radius: 7
 				},
 				axis: 'left',
 				title: legendMap[key],
-				xField: this.groupBy,
+				xField: 'date_display',
 				yField: key,
 				markerConfig: {
 					type: 'cross',
@@ -127,7 +128,7 @@ Ext.define('Lapidos.audio.module.Chart', {
 			],
 			proxy: {
 				type: 'ajax',
-				url: 'http://127.0.0.1:8000/colonic/ticket-stats/read?date_range=year&start_date=2012/05/01&end_date=2012/11/01'
+				url: 'http://127.0.0.1:8000/colonic/ticket-stats/read?date_range=year'
 			}
 		});
 		this.chartInfoStore.on('load', function(store, records) {
