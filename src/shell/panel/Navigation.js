@@ -82,11 +82,15 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 	popView: function(animated) {
 		// Do not pop the root view
 		if (this.views.length <= 1) {
-			return;
+			return null;
 		}
+		
+		var poppedView = this.views[this.views.length - 1];
 		
 		// Pop to the previous view
 		this.popToView(this.views[this.views.length - 2], animated);
+		
+		return poppedView;
 	},
 	
 	popToView: function(view, animated) {
@@ -146,21 +150,24 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		// Tell the layout which view is active
 		this.getLayout().setActiveItem(this.getActiveView());
 		
+		// Keep reference to current active view
+		var currentActiveView = this.getLayout().getActiveItem();
+		
 		// Animate old view to the right
 		if (animated != null) {
 			
 			if (animated == 'left') {
-				this.getActiveView().getEl().animate({
+				currentActiveView.getEl().animate({
 					duration: 500,
 					from: {
-						x: this.getActiveView().getEl().getWidth()
+						x: this.getWidth()
 					},
 					to: {
-						x: this.getActiveView().getEl().getAnchorXY()[0]
+						x: currentActiveView.getEl().getAnchorXY()[0]
 					},
 					listeners: {
 						beforeanimate:  function() {
-							this.getActiveView().originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top');
+							currentActiveView.originalStyles = currentActiveView.getEl().getStyles('position', 'left', 'top');
 							previousActiveView.originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top', 'display');
 							previousActiveView.show();
 							previousActiveView.getEl().setStyle({
@@ -168,10 +175,18 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 								left:0,
 								top: 0
 							});
+							
 						},
 						afteranimate: function() {
-							previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
-							this.getActiveView().getEl().setStyle(this.getActiveView().originalStyles);
+							if (previousActiveView.originalStyles) {
+								previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
+								delete previousActiveView.originalStyles;
+							}
+							
+							if (currentActiveView.originalStyles) {
+								currentActiveView.getEl().setStyle(currentActiveView.originalStyles);
+								delete currentActiveView.originalStyles;
+							}
 						},
 						scope: this
 					}
@@ -184,7 +199,7 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 						x: this.getActiveView().getEl().getAnchorXY()[0]
 					},
 					to: {
-						x: this.getActiveView().getEl().getWidth()
+						x: this.getWidth()
 					},
 					listeners: {
 						beforeanimate:  function() {
