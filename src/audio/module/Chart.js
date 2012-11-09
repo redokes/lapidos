@@ -22,9 +22,20 @@ Ext.define('Lapidos.audio.module.Chart', {
 					layout: 'fit',
 					title: 'Test'
 				}
+			},
+			nav: {
+				cls: 'Lapidos.shell.panel.Navigation'
 			}
 		},
+		viewDefault: 'nav',
 		groupBy: 'month'
+	},
+	
+	showViewNav: function(module, view, options) {
+		console.log('nav');
+		console.log(arguments);
+		window.nav = view;
+		window.header = view.getHeader();
 	},
 	
 	getFields: function() {
