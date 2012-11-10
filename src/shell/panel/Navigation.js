@@ -28,6 +28,7 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		}
 		
 		this.on('afterrender', function() {
+			return;
 			var panel1 = new Ext.panel.Panel({
 				title: 'View 1',
 				html: 'This is view one'
@@ -59,14 +60,17 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 	},
 	
 	pushView: function(view, animated) {
-		
-		// Push this view on the view array
-		this.views.push(view);
+		// TODO: make sure this view is not already in the stack
 		
 		// Set at the root view if this is the first view
 		if (this.rootView == null) {
 			this.setRootView(view);
+			return;
 		}
+		
+		this.views.push(view);
+		view.navigationView = this;
+		
 		
 		// Set this view as the active view
 		this.setActiveView(view);
@@ -74,7 +78,6 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		if (animated === true) {
 			animated = 'left';
 		}
-		
 		// Update the layout and title
 		this.updateView(animated);
 	},
@@ -118,22 +121,37 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 	},
 	
 	setRootView: function(view) {
-		// Pop to current root
-		this.popToRootView();
+		this.views = [];
+		this.rootView = view;
+		this.pushView(view);
+		window.nav = this;
+		return;
 		
-		// Ignore if view is already rootView
-		if (this.getRootView() == view) {
-			return;
+		if (this.views.indexOf(view) == -1) {
+			
+		}
+		if (this.rootView == null) {
+			this.rootView = view;
+			this.pushView(view);
+			return view;
 		}
 		
+		// Pop to current root
+		this.popToRootView();
+
+		// Ignore if view is already rootView
+		if (this.getRootView() == view) {
+			return view;
+		}
+
 		// Put new root at front of views array
 		this.views.unshift(view);
+
+		// Pop to new root
+		this.popToRootView();
 		
 		// Set new root
 		this.rootView = view;
-		
-		// Pop to new root
-		this.popToRootView();
 		
 	},
 	

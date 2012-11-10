@@ -255,14 +255,14 @@ Ext.define('Lapidos.module.Viewable', {
 			//Try to find default view
 			record = this.viewStore.findRecord('type', this.getViewDefault());
 			if (record == null) {
-				return;
+				return null;
 			}
 		}
 		
 		//Check if this view has already loaded
-		this.setActiveView(record);
+//		this.setActiveView(record);
 		if (record.get('loaded') || record.get('loading')) {
-			return;
+			return record;
 		}
 		
 		//Set the record to loading
@@ -278,10 +278,12 @@ Ext.define('Lapidos.module.Viewable', {
 				loading: false,
 				loaded: true
 			});
-			this.setActiveView(record);
+//			this.setActiveView(record);
 			this.fireEvent('initview', this, view, record);
 			this.fireEvent('initview' + record.get('type'), this, view, record);
 		}, this, [record]), this);
+		
+		return record;
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -301,22 +303,7 @@ Ext.define('Lapidos.module.Viewable', {
 	
 	getActiveView: function(callback, scope) {
 		scope = scope || this;
-		var activeView = this.activeView;
-		if (activeView == null) {
-			return;
-		}
-		
-		if (activeView.get('loaded')) {
-			Ext.bind(callback, scope)(activeView.get('instance'));
-		}
-		else {
-			this.on('initview' + activeView.get('type'), function(module, view, record, options) {
-				Ext.bind(options.callback, options.scope)(record.get('instance'));
-			}, this, {
-				callback: callback, 
-				scope: scope
-			});
-		}
+		this.loadView(this.activeView, callback, scope);
 	},
 	
 	getViewStore: function() {
@@ -329,6 +316,29 @@ Ext.define('Lapidos.module.Viewable', {
 		}
 		var record = this.viewStore.findRecord('type', type);
 		return record;
+	},
+	
+	loadViewNamed: function(viewName, callback, scope) {
+		this.loadView(this.getViewRecord(viewName), callback, scope);
+	},
+	
+	loadView: function(view, callback, scope) {
+		scope = scope || this;
+		if (view == null) {
+			return;
+		}
+		if (view.get('loaded')) {
+			Ext.bind(callback, scope)(view.get('instance'));
+		}
+		else {
+			this.on('initview' + view.get('type'), function(module, view, record, options) {
+				Ext.bind(options.callback, options.scope)(record.get('instance'));
+			}, this, {
+				callback: callback, 
+				scope: scope
+			});
+		}
+		this.initView(view.get('type'));
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -397,7 +407,10 @@ Ext.define('Lapidos.module.Viewable', {
 	
 	onBeforeLaunch: function(params) {
 		this.callParent(arguments);
-		this.initView(params[this.getViewParam()] || this.getViewDefault());
+		var viewRecord = this.initView(params[this.getViewParam()] || this.getViewDefault());
+		if (viewRecord) {
+			this.setActiveView(viewRecord);
+		}
 	},
 	
 	onLaunch: function(params) {
