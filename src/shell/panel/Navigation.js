@@ -120,39 +120,16 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		this.updateView(animated);
 	},
 	
-	setRootView: function(view) {
+	removeAllViews: function() {
+		// TODO: actually destroy and remove views
 		this.views = [];
+	},
+	
+	setRootView: function(view) {
+		this.removeAllViews();
 		this.rootView = view;
 		this.pushView(view);
 		window.nav = this;
-		return;
-		
-		if (this.views.indexOf(view) == -1) {
-			
-		}
-		if (this.rootView == null) {
-			this.rootView = view;
-			this.pushView(view);
-			return view;
-		}
-		
-		// Pop to current root
-		this.popToRootView();
-
-		// Ignore if view is already rootView
-		if (this.getRootView() == view) {
-			return view;
-		}
-
-		// Put new root at front of views array
-		this.views.unshift(view);
-
-		// Pop to new root
-		this.popToRootView();
-		
-		// Set new root
-		this.rootView = view;
-		
 	},
 	
 	popToRootView: function() {
@@ -160,83 +137,10 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		this.popToView(this.getRootView());
 	},
 	
-	updateView: function(animated) {
-		
-		// Remember the current visible view
-		var previousActiveView = this.getLayout().getActiveItem();
+	updateView: function() {
 		
 		// Tell the layout which view is active
 		this.getLayout().setActiveItem(this.getActiveView());
-		
-		// Keep reference to current active view
-		var currentActiveView = this.getLayout().getActiveItem();
-		
-		// Animate old view to the right
-		if (animated != null) {
-			
-			if (animated == 'left') {
-				currentActiveView.getEl().animate({
-					duration: 500,
-					from: {
-						x: this.getWidth()
-					},
-					to: {
-						x: currentActiveView.getEl().getAnchorXY()[0]
-					},
-					listeners: {
-						beforeanimate:  function() {
-							currentActiveView.originalStyles = currentActiveView.getEl().getStyles('position', 'left', 'top');
-							previousActiveView.originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top', 'display');
-							previousActiveView.show();
-							previousActiveView.getEl().setStyle({
-								position: 'absolute',
-								left:0,
-								top: 0
-							});
-							
-						},
-						afteranimate: function() {
-							if (previousActiveView.originalStyles) {
-								previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
-								delete previousActiveView.originalStyles;
-							}
-							
-							if (currentActiveView.originalStyles) {
-								currentActiveView.getEl().setStyle(currentActiveView.originalStyles);
-								delete currentActiveView.originalStyles;
-							}
-						},
-						scope: this
-					}
-				});
-			}
-			else if (animated == 'right') {
-				previousActiveView.getEl().animate({
-					duration: 500,
-					from: {
-						x: this.getActiveView().getEl().getAnchorXY()[0]
-					},
-					to: {
-						x: this.getWidth()
-					},
-					listeners: {
-						beforeanimate:  function() {
-							previousActiveView.originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top', 'display');
-							previousActiveView.show();
-							previousActiveView.getEl().setStyle({
-								position: 'absolute',
-								left:0,
-								top: 0
-							});
-						},
-						afteranimate: function() {
-							previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
-						},
-						scope: this
-					}
-				});
-			}
-		}
 		
 		// Remove current items from the title bar
 		var header = this.getHeader();
@@ -368,6 +272,92 @@ Ext.define('Lapidos.shell.panel.Navigation', {
 		});
 		
 		header.add(left, center, right);
+	},
+	
+	// This is the old animated logic
+	updateView2: function(animated) {
+		
+		// Remember the current visible view
+		var previousActiveView = this.getLayout().getActiveItem();
+		
+		// Tell the layout which view is active
+		this.getLayout().setActiveItem(this.getActiveView());
+		
+		// Keep reference to current active view
+		var currentActiveView = this.getLayout().getActiveItem();
+		
+		// Animate old view to the right
+		if (animated != null) {
+			
+			if (animated == 'left') {
+				currentActiveView.getEl().animate({
+					duration: 500,
+					from: {
+						x: this.getWidth()
+					},
+					to: {
+						x: currentActiveView.getEl().getAnchorXY()[0]
+					},
+					listeners: {
+						beforeanimate:  function() {
+							currentActiveView.originalStyles = currentActiveView.getEl().getStyles('position', 'left', 'top');
+							previousActiveView.originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top', 'display');
+							previousActiveView.show();
+							previousActiveView.getEl().setStyle({
+								position: 'absolute',
+								left:0,
+								top: 0
+							});
+							
+						},
+						afteranimate: function() {
+							if (previousActiveView.originalStyles) {
+								previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
+								delete previousActiveView.originalStyles;
+							}
+							
+							if (currentActiveView.originalStyles) {
+								currentActiveView.getEl().setStyle(currentActiveView.originalStyles);
+								delete currentActiveView.originalStyles;
+							}
+						},
+						scope: this
+					}
+				});
+			}
+			else if (animated == 'right') {
+				previousActiveView.getEl().animate({
+					duration: 500,
+					from: {
+						x: this.getActiveView().getEl().getAnchorXY()[0]
+					},
+					to: {
+						x: this.getWidth()
+					},
+					listeners: {
+						beforeanimate:  function() {
+							previousActiveView.originalStyles = previousActiveView.getEl().getStyles('position', 'left', 'top', 'display');
+							previousActiveView.show();
+							previousActiveView.getEl().setStyle({
+								position: 'absolute',
+								left:0,
+								top: 0
+							});
+						},
+						afteranimate: function() {
+							previousActiveView.getEl().setStyle(previousActiveView.originalStyles);
+						},
+						scope: this
+					}
+				});
+			}
+		}
+		
+		// Remove current items from the title bar
+		var header = this.getHeader();
+		header.removeAll();
+		
+		this.navDrawMethod(this, header);
 	}
 	
 });
