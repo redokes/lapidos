@@ -279,7 +279,19 @@ Ext.define('Lapidos.module.Viewable', {
 				loaded: true
 			});
 //			this.setActiveView(record);
+			
+			var functionName = 'onInitView';
+			if (Ext.isFunction(this[functionName])) {
+				this[functionName](this, view, record);
+			}
 			this.fireEvent('initview', this, view, record);
+			
+			var typeName = record.get('type');
+			typeName = typeName.charAt(0).toUpperCase() + typeName.slice(1);
+			functionName += typeName
+			if (Ext.isFunction(this[functionName])) {
+				this[functionName](this, view, record);
+			}
 			this.fireEvent('initview' + record.get('type'), this, view, record);
 		}, this, [record]), this);
 		
