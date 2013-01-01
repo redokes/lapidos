@@ -237,7 +237,7 @@ Ext.define('Lapidos.module.Viewable', {
 		}
 		
 		// Set the active view
-		var activeRecord = this.viewStore.findRecord('type', this.getViewDefault());
+		var activeRecord = this.viewStore.findRecord('type', this.getViewDefault(), 0, false, true, true);
 		if (activeRecord != null) {
 			this.setActiveView(activeRecord);
 		}
@@ -250,10 +250,10 @@ Ext.define('Lapidos.module.Viewable', {
 		}
 		
 		//Get the view record
-		var record = this.viewStore.findRecord('type', type);
+		var record = this.viewStore.findRecord('type', type, 0, false, true, true);
 		if (record == null) {
 			//Try to find default view
-			record = this.viewStore.findRecord('type', this.getViewDefault());
+			record = this.viewStore.findRecord('type', this.getViewDefault(), 0, false, true, true);
 			if (record == null) {
 				return null;
 			}
@@ -326,7 +326,7 @@ Ext.define('Lapidos.module.Viewable', {
 		if (type == null) {
 			type = this.getViewDefault();
 		}
-		var record = this.viewStore.findRecord('type', type);
+		var record = this.viewStore.findRecord('type', type, 0, false, true, true);
 		return record;
 	},
 	
@@ -388,7 +388,7 @@ Ext.define('Lapidos.module.Viewable', {
 		
 		//Find the record for the view
 		var type = options.type || this.getViewDefault();
-		var record = this.viewStore.findRecord('type', type);
+		var record = this.viewStore.findRecord('type', type, 0, false, true, true);
 		if (record == null) {
 			return;
 		}
@@ -410,7 +410,7 @@ Ext.define('Lapidos.module.Viewable', {
 	onViewReady: function(options) {
 		// TODO: revisit this property name. it shouldn't be either view or type
 		var type = options.view || options.type || this.getViewDefault();
-		var record = this.viewStore.findRecord('type', type);
+		var record = this.viewStore.findRecord('type', type, 0, false, true, true);
 		if (record != null && record.get('loaded')) {
 			return [this, record.get('instance'), options];
 		}
@@ -420,7 +420,7 @@ Ext.define('Lapidos.module.Viewable', {
 	onBeforeLaunch: function(params) {
 		this.callParent(arguments);
 		var viewRecord = this.initView(params[this.getViewParam()] || this.getViewDefault());
-		if (viewRecord) {
+		if (viewRecord && this.activeView != viewRecord) {
 			this.setActiveView(viewRecord);
 		}
 	},
