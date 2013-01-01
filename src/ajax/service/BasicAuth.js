@@ -49,15 +49,25 @@ Ext.define('Lapidos.ajax.service.BasicAuth', {
 		else {
 			matchUrl = location.host + '/' + options.url;
 			matchUrl = matchUrl.replace('//', '/');
-
+			matchUrl = location.protocol + '//' + matchUrl;
+			
+			// Remove trailing slash
+			if (matchUrl.charAt(matchUrl.length - 1) == '/') {
+				matchUrl = matchUrl.substring(0, matchUrl.length - 1);
+			}
 		}
-
+		
 		// Check if request url matches any url patterns
 		for (var urlPattern in this.urlPatterns) {
 
 			if (matchUrl.match(urlPattern)) {
+				// Make sure headers is an object
 				options.headers = options.headers || {};
-				options.headers = Ext.apply(options.headers, this.urlPatterns[urlPattern].header)
+				
+				// Set auth header if one isn't already set
+				options.headers = Ext.apply(this.urlPatterns[urlPattern].header, options.headers);
+				console.log('matched and set headers');
+				console.log(options.headers);
 			}
 
 		}
