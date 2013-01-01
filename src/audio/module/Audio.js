@@ -9,7 +9,7 @@ Ext.define('Lapidos.audio.module.Audio', {
 	config: {
 		name: 'audio',
 		title: 'Audio',
-		icon: '/js/lapidos/src/audio/img/audio-32.png',
+		icon: Ext.Loader.getPath('Lapidos') + '/audio/img/audio-32.png',
 		services: [
 			'Lapidos.audio.service.Audio'
 		],
