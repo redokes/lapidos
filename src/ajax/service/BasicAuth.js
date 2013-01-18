@@ -10,7 +10,12 @@ Ext.define('Lapidos.ajax.service.BasicAuth', {
 		autoStart: false,
 		urlPatterns: {}
 	},
-	
+
+//    constructor: function() {
+//        this.callParent(arguments);
+//        Ext.Ajax.useDefaultXhrHeader = false;
+//    },
+
 	addUrlPattern: function(urlPattern, username, password) {
 		this.urlPatterns[urlPattern] = {
 			username: username,
@@ -56,7 +61,7 @@ Ext.define('Lapidos.ajax.service.BasicAuth', {
 				matchUrl = matchUrl.substring(0, matchUrl.length - 1);
 			}
 		}
-		
+
 		// Check if request url matches any url patterns
 		for (var urlPattern in this.urlPatterns) {
 
@@ -66,8 +71,6 @@ Ext.define('Lapidos.ajax.service.BasicAuth', {
 				
 				// Set auth header if one isn't already set
 				options.headers = Ext.apply(this.urlPatterns[urlPattern].header, options.headers);
-				console.log('matched and set headers');
-				console.log(options.headers);
 			}
 
 		}
