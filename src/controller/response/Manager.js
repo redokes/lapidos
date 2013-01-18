@@ -143,14 +143,12 @@ Ext.define('Lapidos.controller.response.Manager', {
 	
 	sendHeaders: function() {
 		this.setHeaderData();
-		if (this.getSendPlainText()) {
-			
-		}
-		else if (this.getResponse()) {
-			this.getResponse().writeHead(200, {'Content-Type': 'application.json'});
-			this.getResponse().write(JSON.stringify(this.getReturnCode()))
-			this.getResponse().end('');
-		}
-	}
+        this.response.json(this.getReturnCode());
+	},
+
+    send404: function(content) {
+        content = content || 'File not found';
+        this.response.status(404).send(content);
+    }
 	
 });

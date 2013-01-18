@@ -8,7 +8,8 @@ Ext.define('Lapidos.controller.Front', {
 	
 	config: {
 		requestParser: null,
-		responseManager: null
+		responseManager: null,
+        request: null
 	},
 	
 	constructor: function(config) {
@@ -19,7 +20,9 @@ Ext.define('Lapidos.controller.Front', {
 	},
 	
 	initRequestParser: function() {
-		this.setRequestParser(new Lapidos.controller.request.Parser());
+		this.setRequestParser(new Lapidos.controller.request.Parser({
+            request: this.request
+        }));
 		this.getRequestParser().parse();
 	},
 	
@@ -35,7 +38,6 @@ Ext.define('Lapidos.controller.Front', {
 		// Look for controller class
 		var controllerClassName = 'Lapidos.' + moduleName + '.controller.' + controllerName;
 		var errorControllerClassName = moduleName + '.controller.Error';
-		console.log(controllerClassName);
 		try {
 			Ext.require(controllerClassName, function() {
 //				var controllerClass = Ext.create(controllerClassName, {
@@ -50,7 +52,7 @@ Ext.define('Lapidos.controller.Front', {
 			});
 		}
 		catch(e) {
-			this.getResponseManager().sendHeaders();
+            this.responseManager.send404();
 		}
 	}
 	

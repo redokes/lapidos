@@ -7,10 +7,16 @@ Ext.define('Lapidos.node.server.service.Http', {
 	],
 	
 	http: require('http'),
+	https: require('https'),
 	fs: require('fs'),
 	qs: require('querystring'),
 	utils: require('util'),
+    url: require('url'),
 	httpServer: null,
+	httpsServer: null,
+    express: express,
+    app: null,
+    root: '/projects/nodejs/game/public/',
 	
 	config: {
 		name: 'node-http',
@@ -21,17 +27,54 @@ Ext.define('Lapidos.node.server.service.Http', {
 	
 	init: function() {
 		this.callParent(arguments);
+        this.initApp();
 		this.initHttpServer();
 	},
+
+    initApp: function() {
+        this.app = express();
+
+        this.app.all(/^\/([a-z0-9\-]+)\/?([a-z0-9\-]+)?\/?([a-z0-9\-]+)?\/?([^\.]*)$/, function(request, response, next) {
+            console.log('matched');
+            var frontController = new Lapidos.controller.Front({
+                request: request
+            });
+
+            // Set reference to node response object
+            frontController.getResponseManager().setResponse(response);
+
+            // Run the front controller
+            frontController.run();
+
+        }.bind(this));
+
+        this.app.get('/', function(request, response) {
+            response.sendfile('/index.html', {
+                root: this.root
+            });
+        }.bind(this));
+
+        this.app.get('*', function(request, response) {
+            var relativePath = request.path;
+            response.sendfile(relativePath, {
+                root: this.root
+            });
+        }.bind(this));
+    },
 	
 	initHttpServer: function() {
+
+        this.httpServer = this.http.createServer(this.app).listen(this.port);
+//        this.httpsServer = this.https.createServer({}, this.app).listen(443);
+
+        return;
 		this.httpServer = this.http.createServer(function(request, response) {
 			var requestObject = require('url').parse(request.url, true);
 			var path = requestObject.pathname.replace(/^\//, "").replace(/\/$/, "");
 			var parts = path.split('/');
 			
 			//Total Rig for now
-			if(parts[0] == 'file'){
+			if (parts[0] == 'file') {
 				console.log('------File-------');
 				console.log(request.headers);
 			}
@@ -39,9 +82,11 @@ Ext.define('Lapidos.node.server.service.Http', {
 			//Handle the post params
 			if (request.method == 'POST') {
 				var body = '';
-				request.on('data', function(data) {
+
+                request.on('data', function(data) {
 					body += data;
 				}.bind(this));
+
 				request.on('end', function() {
 					var post = this.qs.parse(body.replace( /\+/g, ' ' ));
 					this.onRequest(request, response, path, post);
@@ -51,10 +96,19 @@ Ext.define('Lapidos.node.server.service.Http', {
 				this.onRequest(request, response, path, {});
 			}
 		}.bind(this));
+
 		this.httpServer.listen(this.port);
 	},
 	
 	onRequest: function(request, response, path, params) {
+
+        // Determine if this is a file or a controller
+        if (request.url === '/favicon.ico') {
+            response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+            response.end();
+            return;
+        }
+
 		// Handle any params
 		var parts = require('url').parse(request.url, true)
 		Ext.apply(params, parts.query);
@@ -70,11 +124,7 @@ Ext.define('Lapidos.node.server.service.Http', {
 		
 		// Run the front controller
 		frontController.run();
-		
-//		return;
-		
-		
-		
+
 		response.writeHead(200, {'Content-Type': 'text/plain'});
 		response.end('');
 		var module = 'index';
@@ -89,7 +139,7 @@ Ext.define('Lapidos.node.server.service.Http', {
 		
 		var eventName = 'request' + module;
 		var methodName = this.getActionName(action);
-		
+
 		this.fireEvent(eventName, methodName, request, response, path, params);
 		response.end('');
 	},

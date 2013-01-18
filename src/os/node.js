@@ -1,9 +1,11 @@
-require('node-extjs');
+express = require('express');
+extjs = require('node-extjs-fork');
+socketio = require('socket.io');
 
 Ext.Loader.setConfig({
 	enabled: true,
 	paths: {
-		Lapidos: __dirname + '/../'
+		Lapidos: __dirname + '/..'
 	}
 });
 
@@ -14,10 +16,13 @@ var requires = [
 ];
 
 Ext.require(requires, function() {
-	var os = new Lapidos.os.Os();
-	var shell = new Lapidos.shell.Console(os);
-	var modules = [
-		'Lapidos.node.server.module.Server'
-	];
-	os.getModuleManager().register(modules);
+    var os = new Lapidos.os.Os({
+        shell: new Lapidos.shell.Console()
+    });
+    os.boot();
+
+    var modules = [
+        'Lapidos.node.server.module.Server'
+    ];
+    os.getModuleManager().register(modules);
 });
