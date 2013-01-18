@@ -39,20 +39,17 @@ Ext.define('Lapidos.shell.Shell', {
 	///////////////////////////////////////////////////////////////////////////
 	// Inits
 	///////////////////////////////////////////////////////////////////////////
-    constructor: function(os, config){
-		this.callParent([config]);
+    constructor: function(config){
+		this.callParent(arguments);
 		this.initConfig(config);
-		this.setOs(os);
-		this.getOs().setShell(this);
-		this.initListeners();
-		this.initNavigationStore();
-		this.initServices();
-		this.init();
 	},
 	
-	initServices: Ext.emptyFn,
-	init: Ext.emptyFn,
-	initListeners: function(){
+	setOs: function(os) {
+		this.os = os;
+		this.getOs().on('beforeboot', this.init, this);
+	},
+	
+	initListeners: function() {
 		this.getOs().getModuleManager().on('register', this.onModuleRegister, this);
 		this.getOs().getModuleManager().on('launch', this.onModuleLaunch, this);
 		this.getOs().getModuleManager().on('quit', this.onModuleQuit, this);
@@ -62,11 +59,20 @@ Ext.define('Lapidos.shell.Shell', {
 			name: 'notification'
 		});
 	},
+	
+	init: function() {
+		this.initNavigationStore();
+		this.initServices();
+		this.initListeners();
+	},
+	
 	initNavigationStore: function(){
 		this.setNavigationStore(new Lapidos.shell.navigation.Store({
 			os: this.getOs()
 		}));
 	},
+	
+	initServices: Ext.emptyFn,
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Events

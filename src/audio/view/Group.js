@@ -41,12 +41,11 @@ Ext.define('Lapidos.audio.view.Group', {
 			}, this);
 			
 			this.on('moduleiconclick', function(panel, record) {
-				this.getModule().launch({
-					view: 'channel',
-					config: {
-						group: record
-					}
-				});
+				this.getModule().loadViewNamed('channel', function(view) {
+					view.setTitle(record.get('title'));
+					this.navigationView.pushView(view, true);
+					view.showGroup(record);
+				}, this);
 			}, this);
 		}, this);
 	},

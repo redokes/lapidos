@@ -10,7 +10,7 @@ Ext.define('Lapidos.node.client.service.Manager', {
 		autoStart: true,
 		
 		namespaces: {},
-		serverUrl: false
+		serverUrl: 'http://localhost:8080'
 	},
 	
 	start: function() {
@@ -19,7 +19,6 @@ Ext.define('Lapidos.node.client.service.Manager', {
 			return false;
 		}
 		this.callParent(arguments);
-		
 		if (this.isRunning()) {
 			this.initClient('');
 		}
@@ -61,8 +60,7 @@ Ext.define('Lapidos.node.client.service.Manager', {
 	 * Creates a client object to manage the namespace connection
 	 */
 	initClient: function(name) {
-		var service = this.getOs().getServiceManager().getInstance('socket-manager');
-		if (!service.isRunning()) {
+		if (!this.isRunning()) {
 			return false;
 		}
 		
@@ -73,7 +71,7 @@ Ext.define('Lapidos.node.client.service.Manager', {
 		}
 		
 		// Check if we need to make a namespace
-		if (name.length && !Ext.isDefined(this.getNamespaces()[name])) {
+		if (name.length && !Ext.isDefined(this.namespaces[name])) {
 			// Make sure global namespace exists
 			var globalClient = this.getClient('');
 			if (globalClient == null) {
@@ -88,7 +86,7 @@ Ext.define('Lapidos.node.client.service.Manager', {
 				globalClient.socket.emit('connectToNamespace', {
 					name: name
 				}, Ext.bind(function(params) {
-					this.getNamespaces()[params.name] = null;
+					this.namespaces[params.name] = null;
 					this.initClient(params.name);
 				}, this))
 			}

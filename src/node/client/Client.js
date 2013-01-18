@@ -4,12 +4,13 @@ Ext.define('Lapidos.node.client.Client', {
 		url: '',
 		port: 8080,
 		name: '',
-		soclet: null
+		socket: null
 	},
 	
 	constructor: function(config) {
-        this.initConfig(config);
-		this.addEvents('connect', 'disconnect', 'otherConnect', 'otherDisconnect', 'userConnect', 'userDisconnect');
+        this.callParent(arguments);
+		this.initConfig(config);
+//		this.addEvents('connect', 'disconnect', 'otherConnect', 'otherDisconnect', 'userConnect', 'userDisconnect');
 		this.initSocket();
     },
 	
@@ -23,7 +24,7 @@ Ext.define('Lapidos.node.client.Client', {
 			this.socket = false;
 			return false;
 		}
-		
+		console.log('connect to ' + url);
 		this.socket = io.connect(url);
 		
 		this.socket.on('connect', Ext.bind(function() {

@@ -17,7 +17,7 @@ Ext.define('Lapidos.services.module.Services', {
 				}
 			}
 		},
-		icon: '/js/lapidos/src/services/img/services-32.png',
+		icon: Ext.Loader.getPath('Lapidos') + '/services/img/services-32.png',
 		services: [
 			'Lapidos.services.service.ServiceViewer'
 		],

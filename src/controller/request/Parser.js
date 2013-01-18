@@ -5,10 +5,15 @@ Ext.define('Lapidos.controller.request.Parser', {
 	],
 	
 	config: {
+        request: null,
+
+        module: 'index',
+        controller: 'index',
+        action: 'index',
+
+        url: require('url'),
+
 		requestString: '',
-		action: 'index',
-		module: 'index',
-		controller: 'index',
 		requestParams: {},
 		root: false
 	},
@@ -16,6 +21,7 @@ Ext.define('Lapidos.controller.request.Parser', {
 	constructor: function(config) {
 		this.callParent(arguments);
 		this.initConfig(config);
+        return;
 		if (this.getRequestString() == '') {
 			if (typeof(location) != 'undefined') {
 				if (location.hash.length) {
@@ -30,37 +36,11 @@ Ext.define('Lapidos.controller.request.Parser', {
 	},
 	
 	parse: function() {
-		var requestParts = this.getRequestString().split('/');
-		var requestCount = requestParts.length;
-		var lastPart = requestParts[requestCount-1];
-		
-		// check the last element to see if there are any ?key=value
-		if (lastPart.indexOf('?') != -1) {
-			var paramParts = lastPart.split('?');
-			if (paramParts.length > 1) {
-				requestParts[requestCount - 1] = paramParts[0];
-			}
-		}
-		
-		if (requestCount && requestParts[0].length) {
-			this.setModule(requestParts[0]);
-			if (requestCount > 1 && requestParts[1].length) {
-				this.setController(requestParts[1]);
-				if (requestCount > 2 && requestParts[2].length) {
-					this.setAction(requestParts[2]);
-					if (requestCount > 3) {
-						for (var i = 3; i < requestCount; i += 2) {
-							if ((i + 1) < requestCount) {
-								this.getRequestParams()[requestParts[i]] = requestParts[i + 1];
-							}
-							else if (requestParts[i].length) {
-								this.getRequestParams()[requestParts[i]] = false;
-							}
-						}
-					}
-				}
-			}
-		}
+        this.module = this.request.params[0] || this.module
+        this.controller = this.request.params[1] || this.controller
+        this.action = this.request.params[2] || this.action
+        var parts = this.url.parse(this.request.url, true)
+        Ext.apply(this.requestParams, parts.query);
 	},
 	
 	ucfirst: function(str) {
@@ -85,6 +65,7 @@ Ext.define('Lapidos.controller.request.Parser', {
 	getModuleName: function(str) {
 		str = str || this.getModule();
 		str = str.toLowerCase();
+		str = str.replace('.', '');
 		var parts = str.split('-');
 		var numParts = parts.length;
 		for (var i = 1; i < numParts; i++) {

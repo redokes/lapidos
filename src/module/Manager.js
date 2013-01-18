@@ -196,6 +196,8 @@ Ext.define('Lapidos.module.Manager', {
 	onRegister: function(record, module){
 		module.onRegister();
 		this.fireEvent('register', this, module);
+		module.onAfterRegister();
+		this.fireEvent('afterregister', this, module);
 	},
 	
 	/**

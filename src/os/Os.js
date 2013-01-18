@@ -92,27 +92,26 @@ Ext.define('Lapidos.os.Os', {
 	// Inits / Bootup
 	///////////////////////////////////////////////////////////////////////////
 	constructor: function(config) {
+		this.callParent(arguments);
+		this.initConfig(config);
+		this.init();
+		
 		// Register this os with Lapidos
 		Lapidos.os.Manager.register(this);
-		
-		this.initConfig(config);
-		this.callParent(arguments);
-		this.init();
-		this.boot();
 	},
 	
-	init: Ext.emptyFn,
+	init: function() {
+		this.initServiceManager();
+		this.initModuleManager();
+	},
 	
 	boot: function() {
 		this.onBeforeBoot();
-		this.initServiceManager();
-		this.initModuleManager();
-		this.initShell();
 		this.onBoot();
 	},
 	
 	//Debug
-	fireEvent: function(){
+	fireEvent: function() {
 		return this.callParent(arguments);
 	},
 	
@@ -121,6 +120,14 @@ Ext.define('Lapidos.os.Os', {
 			return;
 		}
 		this.setShell(new Lapidos.shell.Shell(this));
+	},
+	
+	setShell: function(shell) {
+		if (this.getShell() != null) {
+			this.getShell().destroy();
+		}
+		this.shell = shell;
+		this.getShell().setOs(this);
 	},
 	
 	initServiceManager: function(){
@@ -143,6 +150,7 @@ Ext.define('Lapidos.os.Os', {
 	* Function called before the system runs the boot commands
 	*/
 	onBeforeBoot: function() {
+		this.initShell();
 		this.fireEvent('beforeboot', this, this.config);
 	},
 	
