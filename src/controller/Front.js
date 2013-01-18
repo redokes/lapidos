@@ -9,7 +9,9 @@ Ext.define('Lapidos.controller.Front', {
 	config: {
 		requestParser: null,
 		responseManager: null,
-        request: null
+        request: null,
+        response: null,
+        server: null
 	},
 	
 	constructor: function(config) {
@@ -27,7 +29,9 @@ Ext.define('Lapidos.controller.Front', {
 	},
 	
 	initResponseManager: function() {
-		this.setResponseManager(new Lapidos.controller.response.Manager());
+		this.setResponseManager(new Lapidos.controller.response.Manager({
+            response: this.response
+        }));
 	},
 	
 	run: function() {

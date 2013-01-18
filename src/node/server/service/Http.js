@@ -35,15 +35,12 @@ Ext.define('Lapidos.node.server.service.Http', {
         this.app = express();
 
         this.app.all(/^\/([a-z0-9\-]+)\/?([a-z0-9\-]+)?\/?([a-z0-9\-]+)?\/?([^\.]*)$/, function(request, response, next) {
-            console.log('matched');
             var frontController = new Lapidos.controller.Front({
-                request: request
+                request: request,
+                response: response,
+                server: this
             });
 
-            // Set reference to node response object
-            frontController.getResponseManager().setResponse(response);
-
-            // Run the front controller
             frontController.run();
 
         }.bind(this));
@@ -55,11 +52,22 @@ Ext.define('Lapidos.node.server.service.Http', {
         }.bind(this));
 
         this.app.get('*', function(request, response) {
-            var relativePath = request.path;
-            response.sendfile(relativePath, {
-                root: this.root
-            });
+            this.sendFile(request.path, response);
         }.bind(this));
+    },
+
+    sendFile: function(path, response, callback) {
+        callback = callback || function() {}
+        console.log('callback');
+        console.log(callback);
+        response.sendfile(path, {
+            root: this.root
+        }, function() {
+            console.log('real callback');
+            console.log(arguments);
+        }, function() {
+            console.log('maybe here');
+        });
     },
 	
 	initHttpServer: function() {

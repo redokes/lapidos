@@ -142,7 +142,7 @@ Ext.define('Lapidos.controller.response.Manager', {
 	},
 	
 	sendHeaders: function() {
-		this.setHeaderData();
+        this.setHeaderData();
         this.response.json(this.getReturnCode());
 	},
 
