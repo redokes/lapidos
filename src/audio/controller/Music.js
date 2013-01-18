@@ -11,11 +11,18 @@ Ext.define('Lapidos.audio.controller.Music', {
     },
 
     getMp3Action: function() {
-        this.frontController.server.sendFile('2.mp3', this.frontController.response, function() {
-            console.log('callback');
-            console.log(arguments);
+        var id = this.frontController.requestParser.getRequestParam('id', 0);
+        var os = Lapidos.os.Manager.defaultOs;
+        var module = os.moduleManager.getInstance('audio-server');
+        var file = module.metaData[id]['file'];
+        this.frontController.response.sendfile(file, this.frontController.response, function() {
+
         });
     },
+
+    sendHeaders: function() {
+
+    }
 
 
 });

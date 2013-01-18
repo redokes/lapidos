@@ -25,7 +25,7 @@ Ext.define('Lapidos.audio.module.Server', {
 
         this.walk(this.directories[0], function(err, files) {
             console.log(files.length);
-            this.probeFiles(files);
+            this.probeFiles(files.slice(50, 55));
         }.bind(this));
     },
 

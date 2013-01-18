@@ -58,15 +58,10 @@ Ext.define('Lapidos.node.server.service.Http', {
 
     sendFile: function(path, response, callback) {
         callback = callback || function() {}
-        console.log('callback');
-        console.log(callback);
         response.sendfile(path, {
             root: this.root
         }, function() {
-            console.log('real callback');
-            console.log(arguments);
-        }, function() {
-            console.log('maybe here');
+            
         });
     },
 	
