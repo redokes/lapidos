@@ -159,8 +159,8 @@ Ext.define('Lapidos.module.Module', {
 	running: false,
 	
 	constructor: function(config) {
-		this.initConfig(config);
 		this.callParent(arguments);
+        this.initConfig(config);
 		
 		// Make sure there is a name
 		if (this.getName() == null) {
@@ -258,6 +258,7 @@ Ext.define('Lapidos.module.Module', {
 	},
 
 	onRegister: Ext.emptyFn,
+	onAfterRegister: Ext.emptyFn,
 	
 	/**
 	* Method that runs right after a method has been launched

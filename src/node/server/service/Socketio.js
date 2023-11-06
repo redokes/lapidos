@@ -10,7 +10,7 @@ Ext.define('Lapidos.node.server.service.Socketio', {
 		title: 'Node Socket.io Server'
 	},
 	
-	socketio: require('socket.io'),
+	socketio: socketio,
 	io: false,
 	httpServerWrapper: null,
 	httpServer: null,
